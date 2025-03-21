@@ -51,7 +51,7 @@ const Navigation = () => {
 
   const navLink =
     "whitespace-nowrap text-gray-200 hover:text-[#d6b28d] transition-colors border-b-2 border-transparent hover:border-yellow-300 pb-1 text-lg font-semibold";
-
+  // adding a comment for no good reason at all
   return (
     <>
       <nav className="bg-neutral-800 shadow-md min-h-22 fixed w-full top-0 z-50 p-3">
