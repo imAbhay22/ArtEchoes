@@ -39,6 +39,7 @@ import {
   Printmaking,
   useAuth,
   InfiniteScroll,
+  DarkModeProvider,
 } from "./Components";
 
 const MainApp = () => {
@@ -72,11 +73,11 @@ const MainApp = () => {
               element={
                 <>
                   <HeroSection />
-                  <h2 className="text-4xl mt-15 ml-10 font-bold mb-4 text-left">
-                    Collection :
+                  <h2 className="text-4xl mt-15 ml-10 font-bold mb-4 text-center">
+                    All Artworks
                   </h2>
                   <InfiniteScroll />
-                  <h2 className="text-xl font-bold mb-4 text-center">
+                  <h2 className="text-xl mt-10 font-bold mb-4 text-center">
                     This Week's top Art, rated by yours truly, hehe..
                   </h2>
                   <WeeklyTopArt />
@@ -124,11 +125,13 @@ const MainApp = () => {
 const App = () => {
   return (
     <BrowserRouter>
-      <AppProvider>
-        <AuthProvider>
-          <MainApp />
-        </AuthProvider>
-      </AppProvider>
+      <DarkModeProvider>
+        <AppProvider>
+          <AuthProvider>
+            <MainApp />
+          </AuthProvider>
+        </AppProvider>
+      </DarkModeProvider>
     </BrowserRouter>
   );
 };

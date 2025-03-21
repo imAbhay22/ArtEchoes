@@ -27,8 +27,9 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   // Filter artworks based on search query
   const filteredArtworks = itemsToDisplay.filter(
     (artwork) =>
-      artwork.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      artwork.artist.toLowerCase().includes(searchQuery.toLowerCase())
+      artwork &&
+      (artwork.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        artwork.artist?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   // Create empty items array if needed
@@ -38,7 +39,7 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   ];
 
   return (
-    <div className="pl-8 mt-10 pr-8 pb-8 w-full">
+    <div className="pl-8 mt-10 pr-8 min-h-[40vh] pb-8 w-full">
       {/* Search Input */}
       <div className="mb-4 flex justify-center">
         <input
@@ -46,7 +47,7 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
           placeholder="Search artworks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border bg-white rounded-lg shadow-md w-[70%] focus:outline-none"
+          className="p-2 bg-transparent focus:bg-blend-darken border-l-2 border-b-4 border-t-0 border-r-0 border-gray-800 rounded-lg shadow-md w-[70%] focus:outline-none font-bold text-gray-800"
         />
       </div>
 

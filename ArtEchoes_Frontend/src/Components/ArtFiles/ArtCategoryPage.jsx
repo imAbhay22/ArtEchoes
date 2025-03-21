@@ -66,7 +66,7 @@ const ArtCategoryPage = ({ category, title }) => {
       )}
 
       {!loading && filteredArtworks.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center text-gray-800">
           No artworks found in this category
         </div>
       )}

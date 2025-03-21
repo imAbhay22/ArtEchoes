@@ -37,3 +37,4 @@ export { default as PopArt } from "./ArtFiles/PopArt";
 export { default as Minimalism } from "./ArtFiles/Minimalism";
 export { default as ConceptualArt } from "./ArtFiles/ConceptualArt";
 export { default as Printmaking } from "./ArtFiles/Printmaking";
+export { default as DarkModeProvider } from "./Mode/DarkContext";

@@ -1,27 +1,44 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { DarkContext } from "../Mode/DarkContext"; // adjust path if needed
 
 const NavDropdown = ({ title, options, defaultTo }) => {
+  const { darkMode } = useContext(DarkContext);
+
+  // Use the same background colors as in app.css, either via CSS variables or hardcoded here:
+  const dropdownBg = darkMode
+    ? "var(--bg-color-dark)"
+    : "var(--bg-color-light)";
+
   return (
     <div className="relative group">
-      {/* Wrap the title in a Link if defaultTo is provided */}
       {defaultTo ? (
         <Link
           to={defaultTo}
-          className="text-2xl font-bold text-gray-800 hover:text-gray-900 focus:outline-none"
+          // Inherit text color from parent; additional classes can be added as needed
+          style={{ color: "inherit" }}
+          className="text-2xl font-bold hover:underline focus:outline-none"
         >
           {title}
         </Link>
       ) : (
-        <span className="text-2xl font-bold text-gray-800 hover:text-gray-900 focus:outline-none">
+        <span
+          style={{ color: "inherit" }}
+          className="text-2xl font-bold focus:outline-none"
+        >
           {title}
         </span>
       )}
-      <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+      <div
+        style={{ backgroundColor: dropdownBg }}
+        className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300"
+      >
         {options.map(({ label, to }, idx) => (
           <Link
             key={idx}
             to={to}
-            className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+            style={{ color: "inherit" }}
+            className="block px-4 py-2 hover:bg-gray-300"
           >
             {label}
           </Link>

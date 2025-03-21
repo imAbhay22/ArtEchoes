@@ -1,6 +1,12 @@
+import { useContext } from "react";
+import { DarkContext } from "./Mode/DarkContext";
+
 const Footer = () => {
+  const { darkMode } = useContext(DarkContext);
+
+  const modeClass = darkMode ? "dark-mode" : "light-mode";
   return (
-    <footer className="bg-neutral-800 text-gray-300 py-8 text-center">
+    <footer className={` ${modeClass} py-8 text-center`}>
       <p className="text-lg font-semibold">Join us on our journey.</p>
       <div className="mt-4 flex justify-center space-x-4">
         {["🌟", "✨", "🎨", "💫", "🔥"].map((emoji, index) => (

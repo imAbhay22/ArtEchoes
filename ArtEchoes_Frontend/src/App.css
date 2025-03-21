@@ -29,3 +29,41 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* for applying colors to light mode and dark mode */
+
+:root {
+  --bg-color-light: #faf3e0;
+  --bg-color-dark: #262626;
+  --text-color-light: #000000;
+  --text-color-dark: #faf3e0;
+}
+
+.light-mode {
+  background-color: var(--bg-color-light);
+  color: var(--text-color-light);
+}
+
+.dark-mode {
+  background-color: var(--bg-color-dark);
+  color: var(--text-color-dark);
+}
+
+/* Custom Scrollbar for .hide-scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  height: 8px; /* set the height for horizontal scrollbar */
+}
+
+.hide-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #504b4b; /* Gray color for the thumb */
+  border-radius: 12px;
+}
+
+.hide-scrollbar {
+  scrollbar-width: thick;
+  scrollbar-color: #343333 transparent;
+}
