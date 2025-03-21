@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ArtDetailModal from "./ArtDetailModal";
 import image1 from "../assets/Images/AboutImg.jpg";
+// Test change to force Git to recognize this file
 
 const ArtGridAll = () => {
   const [artworks, setArtworks] = useState([]);
