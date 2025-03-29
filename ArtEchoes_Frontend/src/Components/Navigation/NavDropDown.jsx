@@ -31,7 +31,7 @@ const NavDropdown = ({ title, options, defaultTo }) => {
       )}
       <div
         style={{ backgroundColor: dropdownBg }}
-        className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300"
+        className="absolute left-0 invisible w-48 py-2 mt-2 transition-all duration-300 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible"
       >
         {options.map(({ label, to }, idx) => (
           <Link
