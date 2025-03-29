@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import img from "../assets/Images/AboutImg.jpg";
 
 const AuthPopUpHomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showPopUp, setShowPopup] = useState(true);
 
   // Do not show the modal on specific pages.
   if (
@@ -16,14 +17,25 @@ const AuthPopUpHomePage = () => {
     return null;
   }
 
+  if (!showPopUp) {
+    return null;
+  }
+
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
       <div
         className=" sm:w-[40vw]  md:w-[40vw] h-[50vh] rounded-lg p-[2vh] text-center flex flex-col justify-center bg-cover bg-center relative shadow-2xl"
         style={{ backgroundImage: `url(${img})` }}
       >
         {/* Light overlay to brighten the background image */}
-        <div className="absolute inset-0 bg-white/60 rounded-lg"></div>
+        <div className="absolute inset-0 rounded-lg bg-white/60"></div>
+        {/* Close (X) Button */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="absolute flex items-center justify-center w-10 h-10 text-black transition top-2 right-2 hover:text-red-600"
+        >
+          ✕
+        </button>
         {/* Content positioned on top of the overlay */}
         <div className="relative">
           <h2

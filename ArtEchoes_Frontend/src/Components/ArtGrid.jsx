@@ -41,7 +41,7 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   return (
     <div className="pl-8 mt-10 pr-8 min-h-[40vh] pb-8 w-full">
       {/* Search Input */}
-      <div className="mb-4 flex justify-center">
+      <div className="flex justify-center mb-4">
         <input
           type="text"
           placeholder="Search artworks..."
@@ -52,7 +52,7 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
       </div>
 
       {/* Artworks Grid */}
-      <div className="flex justify-around flex-wrap">
+      <div className="flex flex-wrap justify-around">
         {itemsWithPlaceholders.map((artwork, index) => (
           <div
             key={artwork?.id || index}
@@ -60,8 +60,11 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
           >
             {artwork ? (
               <div
-                onClick={() => setSelectedArtwork(artwork)}
-                className="cursor-pointer h-full"
+                onClick={() => {
+                  if (!artwork.filePath) return;
+                  setSelectedArtwork(artwork);
+                }}
+                className="h-full cursor-pointer"
               >
                 <img
                   src={
@@ -75,11 +78,11 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
                       : image1
                   }
                   alt={artwork.title}
-                  className="w-full h-full object-cover"
+                  className="object-cover w-full h-full"
                 />
 
                 <div className="p-2">
-                  <h3 className="text-lg font-semibold mb-2">
+                  <h3 className="mb-2 text-lg font-semibold">
                     {artwork.title}
                   </h3>
                   <p className="text-gray-600">{artwork.artist}</p>
@@ -87,11 +90,11 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
               </div>
             ) : (
               // Skeleton loading state
-              <div className="animate-pulse h-full">
-                <div className="bg-gray-200 w-full h-full" />
+              <div className="h-full animate-pulse">
+                <div className="w-full h-full bg-gray-200" />
                 <div className="p-4 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2" />
+                  <div className="w-3/4 h-4 bg-gray-200 rounded" />
+                  <div className="w-1/2 h-4 bg-gray-200 rounded" />
                 </div>
               </div>
             )}
