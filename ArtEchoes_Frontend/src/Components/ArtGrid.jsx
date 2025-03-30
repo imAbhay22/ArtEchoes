@@ -8,12 +8,10 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // Local search state
 
-  // Handle loading and error states
   if (loading) return <div className="text-center">Loading artworks...</div>;
   if (error)
     return <div className="text-center">Error loading artworks: {error}</div>;
 
-  // Sample static artworks data
   const defaultArtworks = [
     { id: 1, title: "Sunset Glow", artist: "John Doe", image: image1 },
     { id: 2, title: "Mountain View", artist: "Jane Smith", image: image1 },
@@ -21,10 +19,8 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
     { id: 4, title: "Ocean Breeze", artist: "Sarah Lee", image: image1 },
   ];
 
-  // Use provided artworks if available, else use default static artworks
   const itemsToDisplay = artworks.length > 0 ? artworks : defaultArtworks;
 
-  // Filter artworks based on search query
   const filteredArtworks = itemsToDisplay.filter(
     (artwork) =>
       artwork &&
@@ -32,14 +28,13 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
         artwork.artist?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // Create empty items array if needed
   const itemsWithPlaceholders = [
     ...filteredArtworks,
     ...Array(Math.max(0, emptyItems - filteredArtworks.length)).fill(null),
   ];
 
   return (
-    <div className="pl-8 mt-10 pr-8 min-h-[40vh] pb-8 w-full">
+    <div className="pl-8 mt-10 pr-8 min-h-[50vh] pb-8 w-full">
       {/* Search Input */}
       <div className="flex justify-center mb-4">
         <input
@@ -64,9 +59,10 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
                   if (!artwork.filePath) return;
                   setSelectedArtwork(artwork);
                 }}
-                className="h-full cursor-pointer"
+                className="relative h-full cursor-pointer"
               >
                 <img
+                  loading="lazy"
                   src={
                     artwork.filePath
                       ? encodeURI(
@@ -81,11 +77,10 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
                   className="object-cover w-full h-full"
                 />
 
-                <div className="p-2">
-                  <h3 className="mb-2 text-lg font-semibold">
-                    {artwork.title}
-                  </h3>
-                  <p className="text-gray-600">{artwork.artist}</p>
+                {/* Title & Artist Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-2 text-white bg-black/70">
+                  <h3 className="font-semibold text-md">{artwork.title}</h3>
+                  <p className="text-xs">{artwork.artist}</p>
                 </div>
               </div>
             ) : (
@@ -102,7 +97,7 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
         ))}
       </div>
 
-      {/* Conditionally render the modal if an artwork is selected */}
+      {/* Art Detail Modal */}
       {selectedArtwork && (
         <ArtDetailModal
           artwork={selectedArtwork}

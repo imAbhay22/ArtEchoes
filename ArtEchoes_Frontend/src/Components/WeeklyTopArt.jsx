@@ -34,8 +34,8 @@ const WeeklyTopArt = () => {
   ];
 
   return (
-    <div className="pl-8 pr-8 pb-8 w-full">
-      <div className="flex justify-around flex-wrap">
+    <div className="w-full pb-8 pl-8 pr-8">
+      <div className="flex flex-wrap justify-around">
         {weeklyTopArtworks.map((artwork) => (
           <div
             key={artwork.id}
@@ -44,12 +44,13 @@ const WeeklyTopArt = () => {
           >
             {artwork.image ? (
               <img
+                loading="lazy"
                 src={artwork.image}
                 alt={artwork.title}
-                className="w-full h-full object-cover overflow-hidden transform transition duration-300 hover:scale-150"
+                className="object-cover w-full h-full overflow-hidden transition duration-300 transform hover:scale-150"
               />
             ) : (
-              <div className="animate-pulse h-full bg-gray-200"></div>
+              <div className="h-full bg-gray-200 animate-pulse"></div>
             )}
           </div>
         ))}

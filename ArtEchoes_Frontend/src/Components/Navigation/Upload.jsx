@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppContext } from "../AppContext";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 const categoryOptions = [
   "Auto",
@@ -15,7 +16,7 @@ const categoryOptions = [
 const UploadArt = () => {
   const { fetchArtworks } = useAppContext();
   const [title, setTitle] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); // Only one category
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
   const [file, setFile] = useState(null);
@@ -24,7 +25,6 @@ const UploadArt = () => {
   const [loading, setLoading] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
-  // Base API URL configuration
   const API_BASE =
     window.location.hostname === "localhost"
       ? "http://localhost:5000"
@@ -52,15 +52,7 @@ const UploadArt = () => {
     }
   };
 
-  const toggleCategory = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
-  };
-
-  // Updated auto-classify endpoint
+  // Auto classification function: called only when selected category is "Auto"
   const autoCategorize = async (file) => {
     const autoApiUrl = `${API_BASE}/api/upload/classify`;
     const autoFormData = new FormData();
@@ -88,52 +80,58 @@ const UploadArt = () => {
     setSuccess("");
     setLoading(true);
 
-    if (!title || selectedCategories.length === 0 || !file) {
-      setError("Title, at least one category, and file are required");
+    if (!title || !selectedCategory || !file) {
+      setError("Title, a category, and file are required");
       setLoading(false);
       return;
     }
 
-    let finalCategories = selectedCategories;
-    if (selectedCategories.includes("Auto")) {
+    let finalCategory = selectedCategory;
+    // Only call auto classification if "Auto" is selected.
+    if (selectedCategory === "Auto") {
       try {
         const autoCategory = await autoCategorize(file);
-        finalCategories = selectedCategories.filter((cat) => cat !== "Auto");
-        if (!finalCategories.includes(autoCategory)) {
-          finalCategories.push(autoCategory);
-        }
+        finalCategory = autoCategory;
       } catch (err) {
         setLoading(false);
         return;
       }
     }
 
+    const userId = localStorage.getItem("userId");
+    const artistName = localStorage.getItem("username") || "Unknown Artist";
+
+    if (!userId) {
+      setError("User not authenticated. Please log in.");
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("categories", JSON.stringify(finalCategories));
+    // Send categories as a JSON stringified array
+    formData.append("categories", JSON.stringify([finalCategory]));
     formData.append("description", description);
     formData.append("tags", JSON.stringify(tags));
     formData.append("artwork", file);
+    formData.append("userId", userId);
+    formData.append("artist", artistName);
 
     try {
-      // Updated main upload endpoint
       const response = await fetch(`${API_BASE}/api/upload/classify`, {
         method: "POST",
         body: formData,
       });
-
       const result = await response.json();
-
       if (!response.ok) {
         throw new Error(result.message || "Failed to upload artwork");
       }
-
       setSuccess("Artwork uploaded successfully!");
       await fetchArtworks();
 
       // Reset form
       setTitle("");
-      setSelectedCategories([]);
+      setSelectedCategory("");
       setDescription("");
       setTags([]);
       setFile(null);
@@ -144,11 +142,12 @@ const UploadArt = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
-      <main className="flex justify-center items-center p-8">
+      <main className="flex items-center justify-center p-8">
         <div className="w-[75vw] mt-2 bg-white shadow-lg p-8">
-          <h1 className="text-3xl font-bold mb-6">Upload Your Art</h1>
+          <h1 className="mb-6 text-3xl font-bold">Upload Your Art</h1>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title Input */}
             <div>
@@ -159,51 +158,40 @@ const UploadArt = () => {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full border-b border-gray-300 focus:border-indigo-500 focus:outline-none"
+                className="block w-full mt-1 border-b border-gray-300 focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
-
-            {/* Category Selector */}
-            <div
-              className="w-full"
-              tabIndex={0}
-              onBlur={(e) => {
-                if (!e.currentTarget.contains(e.relatedTarget)) {
-                  setShowOptions(false);
-                }
-              }}
-            >
+            {/* Category Selector with Dropdown */}
+            <div className="relative w-full">
               <label className="block text-sm font-medium text-gray-700">
                 Category *
               </label>
-              <div
-                className="flex items-center mt-1 border-b border-gray-300 cursor-pointer focus:border-indigo-500 focus:outline-none p-2"
-                onClick={() => setShowOptions((prev) => !prev)}
+              <button
+                type="button"
+                onClick={() => setShowOptions(!showOptions)}
+                className="flex items-center w-full p-2 bg-transparent border-b border-gray-300 focus:border-indigo-500 focus:outline-none"
               >
-                {selectedCategories.length > 0
-                  ? selectedCategories.join(", ")
-                  : "Select Categories"}
-              </div>
+                <span>{selectedCategory || "Select a category"}</span>
+                <IoMdArrowDropdown className="w-5 h-5 ml-auto" />
+              </button>
               {showOptions && (
-                <div className="mt-2 border border-gray-300 p-2">
+                <div className="absolute z-10 w-full mt-2 bg-white border rounded-md shadow-md">
                   {categoryOptions.map((cat) => (
-                    <label
+                    <div
                       key={cat}
-                      className="flex items-center space-x-2 p-1 hover:bg-gray-100 rounded"
+                      className="p-2 cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setShowOptions(false);
+                      }}
                     >
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(cat)}
-                        onChange={() => toggleCategory(cat)}
-                      />
-                      <span>{cat}</span>
-                    </label>
+                      {cat}
+                    </div>
                   ))}
                 </div>
               )}
             </div>
-
             {/* Description Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -212,14 +200,14 @@ const UploadArt = () => {
               <textarea
                 value={description}
                 onChange={handleDescriptionChange}
-                className="mt-1 block w-full border-b border-gray-300 focus:border-indigo-500 focus:outline-none h-32"
+                className="block w-full h-32 mt-1 border-b border-gray-300 focus:border-indigo-500 focus:outline-none"
                 placeholder="Add description with #hashtags..."
               />
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 py-1 bg-indigo-100 text-indigo-800 text-sm"
+                    className="inline-flex items-center px-2 py-1 text-sm text-indigo-800 bg-indigo-100"
                   >
                     #{tag}
                     <button
@@ -233,13 +221,12 @@ const UploadArt = () => {
                 ))}
               </div>
             </div>
-
             {/* File Uploader */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Upload File *
               </label>
-              <div className="mt-1 flex items-center">
+              <div className="flex items-center mt-1">
                 <label className="inline-block px-4 py-2 rounded-xl bg-[#b88946] text-white cursor-pointer hover:bg-[#d6b28d]">
                   Choose File
                   <input
@@ -259,19 +246,17 @@ const UploadArt = () => {
                 Supported formats: JPEG, PNG, PDF, PSD, AI (Max 20MB)
               </p>
             </div>
-
             {/* Status Messages */}
             {error && (
-              <div className="p-3 bg-red-100 text-red-700 rounded-lg">
+              <div className="p-3 text-red-700 bg-red-100 rounded-lg">
                 {error}
               </div>
             )}
             {success && (
-              <div className="p-3 bg-green-100 text-green-700 rounded-lg">
+              <div className="p-3 text-green-700 bg-green-100 rounded-lg">
                 {success}
               </div>
             )}
-
             {/* Submit Button */}
             <button
               type="submit"
@@ -288,5 +273,3 @@ const UploadArt = () => {
 };
 
 export default UploadArt;
-
-// when someone uploads an art i need to send something like id to the backend so that i can store the art in the database with the user id so we know who upload the art and who is the owner of the art. and using it we can show the art the user uploaded in the profile page.

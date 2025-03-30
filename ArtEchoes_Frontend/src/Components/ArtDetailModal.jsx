@@ -10,11 +10,12 @@ const ArtDetailModal = ({ artwork, onClose }) => {
   // Full-screen preview mode
   if (isFullScreen) {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center bg-black z-999">
         <img
+          loading="lazy"
           src={`http://localhost:5000/${artwork.filePath.replace(/\\/g, "/")}`}
           alt={artwork.title}
-          className="w-full h-full object-contain cursor-pointer"
+          className="object-contain w-full h-full cursor-pointer"
           onClick={() => setIsFullScreen(false)}
         />
       </div>
@@ -22,7 +23,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-610 bg-black/50">
       <div className="bg-white rounded-xl w-[75vw] h-[75vh] flex flex-col relative">
         {/* Close Button */}
         <button
@@ -32,7 +33,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
             // ...or use navigate(-1) if you decide to go back a route.
             // navigate(-1);
           }}
-          className="absolute -top-8 -left-8 text-white text-4xl hover:text-gray-300 transition-colors"
+          className="absolute text-4xl text-white transition-colors -top-8 -left-8 hover:text-gray-300"
         >
           ×
         </button>
@@ -41,7 +42,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
         <div className="absolute top-4 right-4">
           <button
             onClick={() => setIsFullScreen(true)}
-            className="bg-black/60 text-white px-4 py-2 rounded-full hover:bg-black/80 transition-colors"
+            className="px-4 py-2 text-white transition-colors rounded-full bg-black/60 hover:bg-black/80"
           >
             Preview
           </button>
@@ -50,19 +51,20 @@ const ArtDetailModal = ({ artwork, onClose }) => {
         {/* Image Section */}
         <div className="h-[70%] w-full overflow-hidden">
           <img
+            loading="lazy"
             src={`http://localhost:5000/${artwork.filePath.replace(
               /\\/g,
               "/"
             )}`}
             alt={artwork.title}
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
           />
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 p-6 flex flex-col justify-between">
+        <div className="flex flex-col justify-between flex-1 p-6">
           <div>
-            <h2 className="text-3xl font-bold mb-2">{artwork.title}</h2>
+            <h2 className="mb-2 text-3xl font-bold">{artwork.title}</h2>
             <p className="text-gray-600">
               {artwork.description ||
                 "A beautiful piece of art which currently lacks a proper description."}
@@ -70,11 +72,11 @@ const ArtDetailModal = ({ artwork, onClose }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex mt-10 gap-4">
-            <button className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+          <div className="flex gap-4 mt-10">
+            <button className="px-6 py-2 text-white transition-colors bg-black rounded-lg hover:bg-gray-800">
               Buy Now
             </button>
-            <button className="border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="px-6 py-2 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50">
               Share
             </button>
           </div>

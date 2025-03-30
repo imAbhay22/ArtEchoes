@@ -41,9 +41,10 @@ const FeaturedArtistsCarousel = () => {
           >
             <div className="max-w-[25vw] mx-auto aspect-square bg-gray-200 rounded-2xl overflow-hidden relative">
               <img
+                loading="lazy"
                 src={artist.image}
                 alt={artist.name}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                className="object-cover w-full h-full transition-all duration-500 group-hover:scale-105"
               />
 
               <div className="absolute bottom-0 left-0 right-0 p-[2vw] bg-gradient-to-t from-black/80 to-transparent">

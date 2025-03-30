@@ -34,37 +34,42 @@ import {
   AbstractArt,
   Impressionism,
   PopArt,
+  AIArt,
+  VectorArt,
+  ThreeDArt,
   Minimalism,
   ConceptualArt,
   Printmaking,
+  AcrylicPainting,
+  PortraitPainting,
+  LandscapePainting,
+  ModernArt,
+  StreetArt,
+  Realism,
+  Surrealism,
   useAuth,
   InfiniteScroll,
   DarkModeProvider,
 } from "./Components";
 
 const MainApp = () => {
-  // Now we can use the useAuth hook to check if the user is authenticated
   const { isAuthenticated } = useAuth();
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // If the user is not authenticated, set a 2-minute timer to show the modal
     if (!isAuthenticated) {
       const timer = setTimeout(() => {
         setShowModal(true);
-      }, 10000); // 2 minutes = 120000 ms
-
-      // Clear the timer if the user logs in before the 2 minutes are up
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-800 to-white flex">
+    <div className="flex min-h-screen bg-gradient-to-b from-neutral-800 to-white">
       <Sidebar />
-      <div className="w-full relative">
+      <div className="relative w-full">
         <Navigation />
-        {/* Show the modal only if the user is not logged in */}
         {showModal && !isAuthenticated && <AuthPopUpHomePage />}
         <div className="pt-20">
           <Routes>
@@ -73,11 +78,11 @@ const MainApp = () => {
               element={
                 <>
                   <HeroSection />
-                  <h2 className="text-4xl mt-15 ml-10 font-bold mb-4 text-center">
+                  <h2 className="mb-4 ml-10 text-4xl font-bold text-center mt-15">
                     All Artworks
                   </h2>
                   <InfiniteScroll />
-                  <h2 className="text-xl mt-10 font-bold mb-4 text-center">
+                  <h2 className="mt-10 mb-4 text-xl font-bold text-center">
                     This Week's top Art, rated by yours truly, hehe..
                   </h2>
                   <WeeklyTopArt />
@@ -89,9 +94,10 @@ const MainApp = () => {
             <Route path="/paintings" element={<PaintingsPage />} />
             <Route path="/artwork/:id" element={<ArtDetailModal />} />
 
-            {/* New routes for each category */}
+            {/* Category routes */}
             <Route path="/oil-painting" element={<OilPainting />} />
             <Route path="/watercolor" element={<Watercolor />} />
+            <Route path="/acrylic-painting" element={<AcrylicPainting />} />
             <Route path="/sketch" element={<Sketch />} />
             <Route path="/digital-art" element={<DigitalArt />} />
             <Route path="/sculpture" element={<Sculpture />} />
@@ -104,6 +110,15 @@ const MainApp = () => {
             <Route path="/minimalism" element={<Minimalism />} />
             <Route path="/conceptual-art" element={<ConceptualArt />} />
             <Route path="/printmaking" element={<Printmaking />} />
+            <Route path="/portrait-painting" element={<PortraitPainting />} />
+            <Route path="/landscape-painting" element={<LandscapePainting />} />
+            <Route path="/modern-art" element={<ModernArt />} />
+            <Route path="/street-art" element={<StreetArt />} />
+            <Route path="/realism" element={<Realism />} />
+            <Route path="/surrealism" element={<Surrealism />} />
+            <Route path="/vector-art" element={<VectorArt />} />
+            <Route path="/3d-art" element={<ThreeDArt />} />
+            <Route path="/ai-art" element={<AIArt />} />
 
             <Route path="/traditional-art" element={<TraditionalArt />} />
             <Route path="/upload" element={<UploadArt />} />

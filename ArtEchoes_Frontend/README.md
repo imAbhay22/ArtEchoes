@@ -1,8 +1,13 @@
-# React + Vite
+file Utils.js
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Purpose Summary:
 
-Currently, two official plugins are available:
+moveFile: Moves an uploaded file into a category-specific folder, creating the folder if it doesn't exist.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+classifyImage: Invokes a Python script via a child process to classify the image and returns the classification result.
+
+cleanupUploads: Cleans the uploads directory by deleting temporary files while keeping the directory structure intact (preserving a .gitkeep file).
+
+clip script.py
+
+to classify the art using a pre built model

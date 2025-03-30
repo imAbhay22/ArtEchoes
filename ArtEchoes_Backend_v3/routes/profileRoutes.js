@@ -1,12 +1,14 @@
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
-const router = Router();
-import Profile from "../models/profile.js";
 import multer, { diskStorage } from "multer";
 import { authenticate } from "./authMiddleware.js"; // Import your auth middleware
+import Profile from "../models/profile.js";
+import Art from "../models/artModel.js"; // Import the Art model
 
-// Define paths and configuration
+const router = Router();
+
+// Define paths and configuration for profile pictures
 const profilePicsFolder = path.resolve("ProfileUpload");
 const allowedMimeTypes = [
   "image/jpeg",
@@ -57,16 +59,29 @@ const upload = multer({
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
 });
 
-// Get current user's profile
+// Get current user's profile along with artworks
 router.get("/", authenticate, async (req, res) => {
   try {
-    const profile =
-      (await Profile.findOne({ userId: req.userId })) ||
-      new Profile({ userId: req.userId });
+    // Find the user's profile or create one if it doesn't exist
+    let profile = await Profile.findOne({ userId: req.userId });
+    if (!profile) {
+      profile = new Profile({ userId: req.userId });
+      await profile.save();
+    }
 
-    if (!profile._id) await profile.save();
+    // Query for artworks uploaded by this user
+    const artworks = await Art.find({ userId: req.userId })
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.json(profile);
+    // Convert profile to plain object and attach artworks array
+    const profileObj = profile.toObject();
+    profileObj.artworks = artworks.map((art) => ({
+      ...art,
+      filePath: art.filePath ? art.filePath.replace(/\\/g, "/") : "",
+    }));
+
+    res.json(profileObj);
   } catch (error) {
     console.error("Profile fetch error:", error);
     res.status(500).json({ message: "Server error" });
@@ -111,7 +126,6 @@ router.post(
         { new: true, upsert: true } // Create the profile if it doesn't exist
       );
 
-      // Check if updatedProfile is not null (shouldn't be with upsert: true)
       if (!updatedProfile) {
         return res.status(500).json({ message: "Failed to update profile." });
       }

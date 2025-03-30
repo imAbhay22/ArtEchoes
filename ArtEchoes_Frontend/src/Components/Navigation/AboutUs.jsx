@@ -3,9 +3,9 @@ import AboutImg from "/src/assets/Images/AboutImg.jpg";
 const AboutUs = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#faf8f5] to-[#ebe6df] text-[#333]">
-      <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+      <main className="px-6 py-16 mx-auto max-w-7xl sm:px-8 lg:px-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="mb-16 text-center">
           <h1 className="text-5xl font-extrabold text-[#2c2c2c] mb-4 tracking-wide">
             About ArtEcho
           </h1>
@@ -17,12 +17,13 @@ const AboutUs = () => {
 
         {/* Platform Story */}
         <section className="mb-24">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative h-96 rounded-xl overflow-hidden shadow-lg">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div className="relative overflow-hidden shadow-lg h-96 rounded-xl">
               <img
+                loading="lazy"
                 src={AboutImg}
                 alt="Digital Exhibition Concept"
-                className="w-full h-full object-cover"
+                className="object-cover w-full h-full"
               />
             </div>
             <div>
@@ -47,7 +48,7 @@ const AboutUs = () => {
             <h2 className="text-3xl font-bold text-[#2c2c2c] mb-12 text-center">
               Why ArtEcho?
             </h2>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid gap-8 md:grid-cols-3">
               {[
                 {
                   title: "Curated Virtual Galleries",

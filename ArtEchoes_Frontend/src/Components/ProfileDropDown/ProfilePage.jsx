@@ -16,11 +16,11 @@ const ProfilePage = () => {
   });
   const [previewImage, setPreviewImage] = useState("");
 
-  // Fetch user profile from backend using userId from AuthContext
+  // Fetch user profile (including artworks) using userId from AuthContext
   useEffect(() => {
     if (user?.userId) {
       axios
-        .get("/api/profile")
+        .get(`/api/profile?userId=${user.userId}`)
         .then((res) => {
           setProfileData(res.data);
         })
@@ -36,6 +36,7 @@ const ProfilePage = () => {
     if (file && user?.userId) {
       const formData = new FormData();
       formData.append("profilePic", file);
+      formData.append("userId", user.userId); // send userId with the upload
       axios
         .post("/api/profile/upload", formData)
         .then((res) => {
@@ -68,7 +69,7 @@ const ProfilePage = () => {
     setIsEditing(false);
     if (user?.userId) {
       axios
-        .put("/api/profile", updatedProfile)
+        .put("/api/profile", { ...updatedProfile, userId: user.userId })
         .then((res) => {
           // Optionally update state with response data
           setProfileData(res.data);
@@ -86,16 +87,17 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen py-10 bg-gray-100">
+      <div className="container px-4 mx-auto">
         {/* Profile Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex flex-col md:flex-row items-center gap-6">
+        <div className="p-6 bg-white rounded-lg shadow-lg">
+          <div className="flex flex-col items-center gap-6 md:flex-row">
             <div className="relative">
               <img
+                loading="lazy"
                 src={previewImage || profileData.profilePic || defaultImg}
                 alt="Profile"
-                className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-purple-600 cursor-pointer"
+                className="object-cover w-32 h-32 border-4 border-purple-600 rounded-full cursor-pointer md:w-40 md:h-40"
                 onClick={() => fileInputRef.current.click()}
               />
               {/* Hidden file input for profile picture update */}
@@ -118,10 +120,10 @@ const ProfilePage = () => {
                       autoFocus
                       value={editedBio || ""}
                       onChange={handleBioChange}
-                      className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-600"
                       rows="4"
                     />
-                    <div className="flex justify-end mt-2 gap-3">
+                    <div className="flex justify-end gap-3 mt-2">
                       <button
                         onClick={handleBioCancel}
                         className="px-4 py-2 text-gray-600 hover:text-gray-800"
@@ -130,12 +132,12 @@ const ProfilePage = () => {
                       </button>
                       <button
                         onClick={handleBioSave}
-                        className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition duration-200"
+                        className="px-4 py-2 text-white transition duration-200 bg-purple-600 rounded hover:bg-purple-700"
                       >
                         Save
                       </button>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="mt-1 text-sm text-gray-500">
                       Word limit: 250. (Current:{" "}
                       {(editedBio || "").trim() === ""
                         ? 0
@@ -155,7 +157,7 @@ const ProfilePage = () => {
                     setEditedBio(profileData.bio || "");
                     setIsEditing(true);
                   }}
-                  className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition duration-200"
+                  className="px-5 py-2 mt-4 text-white transition duration-200 bg-purple-600 rounded hover:bg-purple-700"
                 >
                   Edit Bio
                 </button>
@@ -166,21 +168,31 @@ const ProfilePage = () => {
 
         {/* Artworks Section */}
         <div className="mt-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 ml-5">
+          <h2 className="mb-4 ml-5 text-2xl font-bold text-gray-800">
             My Artwork Collection
           </h2>
           {(profileData.artworks || []).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {profileData.artworks.map((art, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                  className="overflow-hidden bg-white rounded-lg shadow-md"
                 >
                   <img
-                    src={art.imageUrl}
+                    loading="lazy"
+                    src={
+                      art.filePath
+                        ? encodeURI(
+                            `${
+                              import.meta.env.VITE_API_URL
+                            }/${art.filePath.replace(/\\/g, "/")}`
+                          )
+                        : image1
+                    }
                     alt={art.title}
-                    className="w-full h-48 object-cover"
+                    className="object-cover w-full h-full"
                   />
+
                   <div className="p-3">
                     <h3 className="text-lg font-medium text-gray-700">
                       {art.title}

@@ -8,8 +8,13 @@ const Logo = () => {
 
   return (
     <div className="flex items-center">
-      <Link to="/" className="text-3xl md:text-4xl lg:text-5xl font-bold">
-        <img src={logoSrc} alt="Logo" className="h-12 cursor-pointer" />
+      <Link to="/" className="text-3xl font-bold md:text-4xl lg:text-5xl">
+        <img
+          loading="lazy"
+          src={logoSrc}
+          alt="Logo"
+          className="h-12 cursor-pointer"
+        />
       </Link>
     </div>
   );

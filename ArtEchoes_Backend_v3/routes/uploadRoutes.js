@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import fs from "fs";
-import path from "path"; // <-- Import path module
+import path from "path";
 import Art from "../models/artModel.js";
 import { classifyImage, moveFile } from "../utils/fileUtils.js";
 
@@ -25,18 +25,16 @@ const upload = multer({
 // Middleware to parse JSON fields from form data
 const parseArtData = (req, res, next) => {
   try {
-    if (req.body.categories) {
+    if (req.body.categories)
       req.body.categories = JSON.parse(req.body.categories);
-    }
-    if (req.body.tags) {
-      req.body.tags = JSON.parse(req.body.tags);
-    }
+    if (req.body.tags) req.body.tags = JSON.parse(req.body.tags);
     next();
   } catch (error) {
     res.status(400).json({ error: "Invalid data format" });
   }
 };
 
+// Classify and upload artwork
 router.post(
   "/classify",
   upload.single("artwork"),
@@ -47,9 +45,17 @@ router.post(
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      // Branch based on whether title exists.
-      // If title is not provided, assume this is an auto-categorization request.
-      if (!req.body.title) {
+      const {
+        title,
+        artist = "",
+        categories,
+        description,
+        tags,
+        userId,
+      } = req.body;
+
+      // Auto classification branch: if there's no title, classify and return result
+      if (!title) {
         const classification = await classifyImage(req.file.path);
         const newPath = moveFile(req.file.path, classification);
         return res.json({
@@ -59,43 +65,51 @@ router.post(
         });
       }
 
-      // If title is provided, this is the final upload request.
-      const { title, categories, description, tags } = req.body;
-
-      // Validate required fields for final upload
-      if (!title || !categories?.length) {
+      // Ensure required fields are provided for final upload
+      if (!userId) {
         return res
           .status(400)
-          .json({ error: "Title and categories are required" });
+          .json({ error: "userId is required for saving artwork" });
+      }
+      if (!categories?.length) {
+        return res.status(400).json({ error: "Categories are required" });
       }
 
-      // Run classification (again, if needed)
-      const classification = await classifyImage(req.file.path);
-
-      // Replace "Auto" category with the classified result, if necessary.
-      let finalCategories = categories;
+      // Run classification only if "Auto" is one of the selected categories.
+      let classification;
       if (categories.includes("Auto")) {
-        finalCategories = categories.filter((cat) => cat !== "Auto");
-        if (!finalCategories.includes(classification)) {
-          finalCategories.push(classification);
-        }
+        classification = await classifyImage(req.file.path);
       }
 
-      // Move the file to the appropriate category folder
-      const newPath = moveFile(req.file.path, classification);
+      // Replace "Auto" category with the classified result,
+      // or simply use the selected category if "Auto" is not chosen.
+      let finalCategories = categories.includes("Auto")
+        ? [...categories.filter((cat) => cat !== "Auto"), classification]
+        : categories;
+
+      // Determine which category to use for moving the file.
+      // If classification was run, use that result; otherwise, use the first category.
+      const categoryForMove = categories.includes("Auto")
+        ? classification
+        : finalCategories[0];
+
+      // Move the file to the appropriate category folder using the determined category.
+      const newPath = moveFile(req.file.path, categoryForMove);
 
       // Convert absolute path to relative path
       const relativeFilePath = path
         .relative(process.cwd(), newPath)
         .replace(/\\/g, "/");
 
-      // Create a new artwork record in the database with the relative file path
+      // Save artwork data in the database
       const newArt = new Art({
         title,
+        artist: artist || "Unknown Artist",
         categories: finalCategories,
         description: description || "",
         tags: tags || [],
-        filePath: relativeFilePath, // e.g., "uploads/digital art/1741423502459-filename.jpg"
+        filePath: relativeFilePath,
+        userId,
       });
 
       await newArt.save();
@@ -105,7 +119,9 @@ router.post(
         artwork: {
           id: newArt._id,
           title: newArt.title,
+          artist: newArt.artist,
           filePath: newArt.filePath,
+          userId: newArt.userId,
         },
       });
     } catch (error) {

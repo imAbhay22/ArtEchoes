@@ -26,9 +26,10 @@ const HeroSection = () => {
     <div className="relative h-[50vh]">
       <div className="absolute inset-0 z-0">
         {heroImages.length > 0 ? (
-          <div className="relative h-full w-full">
+          <div className="relative w-full h-full">
             {heroImages.map((img, index) => (
               <img
+                loading="lazy"
                 key={img}
                 src={img}
                 alt="Gallery Background"
@@ -39,22 +40,22 @@ const HeroSection = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-purple-600 to-blue-500 h-full w-full" />
+          <div className="w-full h-full bg-gradient-to-r from-purple-600 to-blue-500" />
         )}
       </div>
 
-      <div className="relative z-10 h-full flex items-center justify-center">
+      <div className="relative z-10 flex items-center justify-center h-full">
         <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="relative text-center text-white px-4">
-          <h1 className="text-5xl font-bold mb-4">
+        <div className="relative px-4 text-center text-white">
+          <h1 className="mb-4 text-5xl font-bold">
             Behold Our Top Masterpieces
           </h1>
-          <p className="text-xl mb-8">
+          <p className="mb-8 text-xl">
             There is a lot more where that came from, hehe..
           </p>
           <button
             onClick={handleClick}
-            className="bg-white text-gray-800 px-8 py-3 rounded-full font-semibold hover:bg-opacity-90 transition-all"
+            className="px-8 py-3 font-semibold text-gray-800 transition-all bg-white rounded-full hover:bg-opacity-90"
           >
             View Collection
           </button>

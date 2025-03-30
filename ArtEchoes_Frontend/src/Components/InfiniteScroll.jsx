@@ -47,6 +47,12 @@ const InfiniteArtScroll = () => {
     });
   };
 
+  useEffect(() => {
+    if (artworks.length > 0) {
+      handleScroll();
+    }
+  }, [artworks]);
+
   if (loading) return <div className="text-center">Loading artworks...</div>;
   if (error) return <div className="text-center">Error: {error}</div>;
 
@@ -59,17 +65,17 @@ const InfiniteArtScroll = () => {
         onScroll={handleScroll}
       >
         <div className="h-full inline-flex items-center px-[15vw]">
-          {/* Reduced padding */}
           {artworks.map((artwork, index) => (
             <div
               key={artwork.id || index}
-              className="w-[35vw] h-[35vh] transition-transform duration-300 relative" // Smaller base size
+              className="w-[35vw] h-[35vh] transition-transform duration-100 relative"
             >
               <div
                 onClick={() => setSelectedArtwork(artwork)}
-                className="cursor-pointer h-full w-full"
+                className="w-full h-full cursor-pointer"
               >
                 <img
+                  loading="lazy"
                   src={
                     artwork.filePath
                       ? encodeURI(
@@ -81,10 +87,10 @@ const InfiniteArtScroll = () => {
                       : image1
                   }
                   alt={artwork.title}
-                  className="w-full h-full object-cover rounded-lg shadow-xl"
+                  className="object-cover w-full h-full rounded-lg shadow-xl"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/70 text-white">
-                  <h3 className="text-md font-semibold">{artwork.title}</h3>
+                <div className="absolute bottom-0 left-0 right-0 p-2 text-white bg-black/70">
+                  <h3 className="font-semibold text-md">{artwork.title}</h3>
                   <p className="text-xs">{artwork.artist}</p>
                 </div>
               </div>

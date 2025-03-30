@@ -1,22 +1,21 @@
 import express from "express";
-import multer from "multer"; // Middleware for handling `multipart/form-data`
-import fs from "fs"; // File system module for Node.js (to manage files)
+import multer from "multer";
+import fs from "fs";
 import Art from "../models/artModel.js";
 
 const router = express.Router();
 
-// Configure storage with proper error handling
+// Ensure the uploads directory exists
 const createUploadsFolder = () => {
   const uploadPath = "uploads/";
   if (!fs.existsSync(uploadPath)) {
-    // if the folder doesn't exist yet, create it
     fs.mkdirSync(uploadPath, { recursive: true });
   }
   return uploadPath;
 };
 
+// Configure storage
 const storage = multer.diskStorage({
-  // diskStorage is a storage engine for multer that gives you full control over storing files to disk
   destination: (req, file, cb) => {
     cb(null, createUploadsFolder());
   },
@@ -26,85 +25,87 @@ const storage = multer.diskStorage({
   },
 });
 
-// Enhanced file validation
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-    "image/svg+xml",
-    "image/bmp", // BMP format
-    "image/tiff", // TIFF format
-    "image/heif", // HEIF format
-    "application/pdf",
-    "application/octet-stream", // For some 3D model types
-    "model/fbx", // FBX format
-    "model/obj", // OBJ format
-    "model/stl", // STL format
-    "model/glb", // GLB format
-    "model/gltf", // GLTF format
-  ];
+// Allowed file types
+const allowedTypes = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+  "image/bmp",
+  "image/tiff",
+  "image/heif",
+  "application/pdf",
+  "application/octet-stream",
+  "model/fbx",
+  "model/obj",
+  "model/stl",
+  "model/glb",
+  "model/gltf",
+];
 
+// Validate file type
+const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
-    // mimetype is the type of the file that was uploaded by the user (e.g. image/jpeg)
     cb(null, true);
   } else {
     cb(new Error(`Invalid file type: ${file.mimetype}`), false);
   }
 };
 
+// Configure multer
 const upload = multer({
   storage,
   fileFilter,
-  limits: {
-    fileSize: 20 * 1024 * 1024, // 20MB limit
-    files: 1,
-  },
+  limits: { fileSize: 20 * 1024 * 1024, files: 1 }, // 20MB limit
 });
 
-// Middleware to handle form data parsing
+// Middleware to parse JSON fields
 const parseArtData = (req, res, next) => {
   try {
-    if (req.body.categories) {
+    if (req.body.categories)
       req.body.categories = JSON.parse(req.body.categories);
-    }
-    if (req.body.tags) {
-      req.body.tags = JSON.parse(req.body.tags);
-    }
+    if (req.body.tags) req.body.tags = JSON.parse(req.body.tags);
     next();
   } catch (error) {
     res.status(400).json({ error: "Invalid data format" });
   }
 };
 
-// Upload endpoint
+// Upload artwork
 router.post(
   "/upload",
   upload.single("artwork"),
   parseArtData,
   async (req, res) => {
     try {
-      const { title, categories, description, tags } = req.body;
+      const {
+        title,
+        artist = "",
+        categories,
+        description,
+        tags,
+        userId,
+      } = req.body;
 
-      if (!title || !categories?.length) {
+      if (!title || !categories?.length || !userId) {
         return res
           .status(400)
-          .json({ error: "Title and categories are required" });
+          .json({ error: "Title, categories, and userId are required" });
       }
-
       if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
       const newArt = new Art({
         title,
+        artist: artist || "Unknown Artist",
         categories,
         description: description || "",
         tags: tags || [],
-        // Ensure filePath is always a string; replacing backslashes for consistency
-        filePath: req.file.path ? req.file.path.replace(/\\/g, "/") : "",
+        filePath: req.file.path.replace(/\\/g, "/"),
+        userId,
       });
 
       await newArt.save();
@@ -114,24 +115,39 @@ router.post(
         artwork: {
           id: newArt._id,
           title: newArt.title,
+          artist: newArt.artist,
           filePath: newArt.filePath,
+          userId: newArt.userId,
         },
       });
     } catch (error) {
       console.error("Upload error:", error);
-
-      // Cleanup uploaded file if error occurred
-      if (req.file) {
-        fs.unlink(req.file.path, () => {});
-      }
-
-      const statusCode = error.name === "ValidationError" ? 400 : 500;
-      res.status(statusCode).json({
-        error: error.message || "Failed to upload artwork",
-      });
+      if (req.file) fs.unlink(req.file.path, () => {});
+      res
+        .status(error.name === "ValidationError" ? 400 : 500)
+        .json({ error: error.message || "Failed to upload artwork" });
     }
   }
 );
+
+// Get artworks by user
+router.get("/artworks/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const artworks = await Art.find({ userId }).sort({ createdAt: -1 }).lean();
+    res.json({
+      artworks: artworks.map((art) => ({
+        ...art,
+        filePath: art.filePath.replace(/\\/g, "/"),
+      })),
+    });
+  } catch (error) {
+    console.error("Fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch user's artworks" });
+  }
+});
+
+// Get all artworks with pagination
 router.get("/artworks", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -143,7 +159,6 @@ router.get("/artworks", async (req, res) => {
       .skip(skip)
       .limit(limit)
       .lean();
-
     const total = await Art.countDocuments();
 
     res.json({
@@ -152,7 +167,7 @@ router.get("/artworks", async (req, res) => {
       pages: Math.ceil(total / limit),
       artworks: artworks.map((art) => ({
         ...art,
-        filePath: art.filePath ? art.filePath.replace(/\\/g, "/") : "",
+        filePath: art.filePath?.replace(/\\/g, "/"),
       })),
     });
   } catch (error) {
@@ -161,18 +176,16 @@ router.get("/artworks", async (req, res) => {
   }
 });
 
-// Get single artwork
+// Get single artwork by ID
 router.get("/artworks/:id", async (req, res) => {
   try {
     const artwork = await Art.findById(req.params.id);
     if (!artwork) {
       return res.status(404).json({ error: "Artwork not found" });
     }
-
     res.json({
       ...artwork.toObject(),
-      // Check if filePath exists before calling replace
-      filePath: artwork.filePath ? artwork.filePath.replace(/\\/g, "/") : "",
+      filePath: artwork.filePath?.replace(/\\/g, "/"),
     });
   } catch (error) {
     console.error("Fetch error:", error);
