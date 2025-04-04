@@ -34,13 +34,13 @@ const WeeklyTopArt = () => {
   ];
 
   return (
-    <div className="w-full pb-8 pl-8 pr-8">
+    <div className="w-full pb-8 pl-4 pr-4">
       <div className="flex flex-wrap justify-around">
         {weeklyTopArtworks.map((artwork) => (
           <div
             key={artwork.id}
             onClick={() => setSelectedArtwork(artwork)}
-            className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg w-[60.66vw] h-[26.66vh] lg:w-[16.66vw] lg:h-[16.66vh] m-2 cursor-pointer"
+            className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg w-full md:w-[60.66vw]  h-[26.66vh] lg:w-[16.66vw] lg:h-[16.66vh] m-2 cursor-pointer"
           >
             {artwork.image ? (
               <img
