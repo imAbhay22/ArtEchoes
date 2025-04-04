@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-const SignUp = () => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setName] = useState("");
@@ -54,14 +54,14 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 to-pink-400">
-      <div className="bg-white shadow-2xl rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-2xl">
+        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
           Join <span className="text-purple-500">ArtEchoes</span>
         </h2>
-        <p className="text-center text-gray-500 mb-4">
+        <p className="mb-4 text-center text-gray-500">
           Sign up to showcase and explore amazing artwork.
         </p>
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Username Input (public identity) */}
           <input
@@ -93,16 +93,16 @@ const SignUp = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-purple-600 text-white py-2 rounded-lg font-bold hover:bg-purple-700 transition duration-300"
+            className="w-full py-2 font-bold text-white transition duration-300 bg-purple-600 rounded-lg hover:bg-purple-700"
           >
             Sign Up
           </button>
         </form>
-        <p className="text-center text-gray-600 mt-4">
+        <p className="mt-4 text-center text-gray-600">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="text-purple-500 font-semibold hover:underline"
+            className="font-semibold text-purple-500 hover:underline"
           >
             Log in
           </Link>
@@ -112,4 +112,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

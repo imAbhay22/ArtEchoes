@@ -21,7 +21,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div className="fixed inset-0 flex items-center justify-center p-4 mt-12 z-250 bg-black/50">
       <div className="bg-white rounded-xl w-[75vw] h-[75vh] flex flex-col relative">
         {/* Close Button */}
         <button

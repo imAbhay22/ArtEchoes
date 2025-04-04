@@ -55,7 +55,7 @@ const Sidebar = () => {
           {isSidebarOpen ? "CLOSE" : "MENU"}
         </div>
         <div className="h-full p-6 overflow-y-auto">
-          <h2 className="mb-3 text-xl font-bold">Categories</h2>
+          <h2 className="mb-3 text-xl font-bold mt-18">Categories</h2>
           <ul className="space-y-4">
             {categories.map((item) => (
               <li

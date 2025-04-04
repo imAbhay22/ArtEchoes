@@ -6,7 +6,7 @@ import image1 from "../assets/Images/AboutImg.jpg";
 const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   const { loading, error } = useAppContext();
   const [selectedArtwork, setSelectedArtwork] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // Local search state
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (loading) return <div className="text-center">Loading artworks...</div>;
   if (error)

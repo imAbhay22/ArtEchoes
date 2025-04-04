@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import {
-  AppProvider,
-  AuthProvider,
   Navigation,
   HeroSection,
   Sidebar,
@@ -49,10 +47,9 @@ import {
   Surrealism,
   useAuth,
   InfiniteScroll,
-  DarkModeProvider,
 } from "./Components";
 
-const MainApp = () => {
+const App = () => {
   const { isAuthenticated } = useAuth();
   const [showModal, setShowModal] = useState(false);
 
@@ -60,7 +57,7 @@ const MainApp = () => {
     if (!isAuthenticated) {
       const timer = setTimeout(() => {
         setShowModal(true);
-      }, 10000);
+      }, 100000);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated]);
@@ -134,20 +131,6 @@ const MainApp = () => {
         <Footer />
       </div>
     </div>
-  );
-};
-
-const App = () => {
-  return (
-    <BrowserRouter>
-      <DarkModeProvider>
-        <AppProvider>
-          <AuthProvider>
-            <MainApp />
-          </AuthProvider>
-        </AppProvider>
-      </DarkModeProvider>
-    </BrowserRouter>
   );
 };
 

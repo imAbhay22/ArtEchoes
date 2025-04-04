@@ -5,11 +5,11 @@ import react from "@vitejs/plugin-react";
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    host: "0.0.0.0", // Listen on all network interfaces
-    port: 5174, // Set the port to 5174
+    host: "0.0.0.0",
+    port: 5174,
     proxy: {
       "/api": {
-        target: "http://192.168.1.100:5000", // Your backend server address
+        target: "http://192.168.1.100:5000",
         changeOrigin: true,
         secure: false,
       },
