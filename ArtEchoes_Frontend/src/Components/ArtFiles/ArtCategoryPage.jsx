@@ -34,13 +34,13 @@ const ArtCategoryPage = ({ category, title }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 mt-10">
       <h2 className="text-4xl font-bold mb-6 text-center text-[silver]">
         {title || "All Artworks"}
       </h2>
 
       {error && (
-        <div className="text-red-500 text-center py-8">
+        <div className="py-8 text-center text-red-500">
           Error loading artworks: {error.message}
         </div>
       )}
@@ -58,7 +58,7 @@ const ArtCategoryPage = ({ category, title }) => {
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages || loading}
-            className="px-8 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:hover:bg-gray-800 transition-colors text-lg"
+            className="px-8 py-3 text-lg text-white transition-colors bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:hover:bg-gray-800"
           >
             {loading ? "Loading..." : `Load More ${title}`}
           </button>

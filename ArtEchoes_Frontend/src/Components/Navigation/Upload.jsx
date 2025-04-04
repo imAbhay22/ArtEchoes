@@ -144,7 +144,7 @@ const UploadArt = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
+    <div className="min-h-screen mt-15 bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
       <main className="flex items-center justify-center p-8">
         <div className="w-[75vw] mt-2 bg-white shadow-lg p-8">
           <h1 className="mb-6 text-3xl font-bold">Upload Your Art</h1>
