@@ -51,15 +51,15 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full border border-gray-200">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+    <div className="flex items-center justify-center min-h-screen text-black bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
+      <div className="w-full max-w-md p-8 bg-white border border-gray-200 rounded-lg shadow-lg">
+        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
           Welcome Back to <span className="text-orange-500">ArtEchoes</span>
         </h2>
-        <p className="text-center text-gray-500 mb-4">
+        <p className="mb-4 text-center text-gray-500">
           Log in to explore and share breathtaking art!
         </p>
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Input field updated to reflect that it accepts email or username */}
           <input
@@ -80,24 +80,24 @@ const Login = () => {
           />
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-lg font-bold hover:bg-orange-600 transition duration-300"
+            className="w-full py-2 font-bold text-white transition duration-300 bg-orange-500 rounded-lg hover:bg-orange-600"
           >
             Log In
           </button>
         </form>
-        <p className="text-center text-gray-600 mt-4">
+        <p className="mt-4 text-center text-gray-600">
           <Link
             to="/forgot-password"
-            className="text-orange-500 font-semibold hover:underline"
+            className="font-semibold text-orange-500 hover:underline"
           >
             Forgot Password?
           </Link>
         </p>
-        <p className="text-center text-gray-600 mt-4">
+        <p className="mt-4 text-center text-gray-600">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-orange-500 font-semibold hover:underline"
+            className="font-semibold text-orange-500 hover:underline"
           >
             Sign up
           </Link>

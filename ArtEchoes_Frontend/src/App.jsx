@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import ScrollToTop from "./ScrollToTop";
+
 import {
   Navigation,
   HeroSection,
@@ -11,9 +13,7 @@ import {
   TraditionalArt,
   UploadArt,
   AboutUs,
-  AboutUsHome,
   ContactUs,
-  WeeklyTopArt,
   AuthPopUpHomePage,
   FeaturedArtistsCarousel,
   SignUp,
@@ -103,6 +103,7 @@ const App = () => {
           : "bg-gradient-to-b from-[#f4f1ee] to-[#e8e6e1] text-[#1a1a1a]"
       }`}
     >
+      <ScrollToTop />
       <Sidebar />
       <div className="relative w-full">
         <Navigation />
@@ -123,7 +124,7 @@ const App = () => {
                   </h2>
                   <ArtGrid defaultArtworks={WeeklyTopArt} />
                   <FeaturedArtistsCarousel />
-                  <AboutUsHome />
+                  <AboutUs />
                 </>
               }
             />

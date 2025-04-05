@@ -5,17 +5,17 @@ const SearchBar = ({ setSearchQuery, className }) => (
       type="text"
       placeholder="Search"
       onChange={(e) => setSearchQuery(e.target.value)}
-      className={`block lg:hidden pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${className}`}
+      className={`block lg:hidden pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500 ${className}`}
     />
     {/* Desktop Input */}
     <input
       type="text"
       placeholder="Search entire collection..."
       onChange={(e) => setSearchQuery(e.target.value)}
-      className={`hidden lg:block pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${className}`}
+      className={`hidden lg:block pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500 ${className}`}
     />
     <svg
-      className="w-5 h-5 absolute left-3 top-3 text-gray-400 pointer-events-none"
+      className="absolute w-5 h-5 text-gray-400 pointer-events-none left-3 top-3"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

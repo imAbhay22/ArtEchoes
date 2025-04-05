@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { useContext } from "react";
+import axios from "axios";
+import { DarkContext } from "../Mode/DarkContext";
 
 const ContactUs = () => {
+  const { darkMode } = useContext(DarkContext);
+  const modeClass = darkMode ? "dark-mode" : "light-mode";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -8,6 +14,7 @@ const ContactUs = () => {
     suggestion: "",
     category: "general",
   });
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -28,11 +35,7 @@ const ContactUs = () => {
     setSuccess(false);
 
     try {
-      const response = await fetch(`${API_URL}/api/suggestions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post(`${API_URL}/api/suggestions`, formData);
 
       if (response.status === 201) {
         setSuccess(true);
@@ -44,11 +47,10 @@ const ContactUs = () => {
           category: "general",
         });
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to submit suggestion");
+        setError("Failed to submit suggestion");
       }
     } catch (err) {
-      setError("Failed to submit suggestion");
+      setError(err.response?.data?.message || "Failed to submit suggestion");
       console.error(err);
     } finally {
       setLoading(false);
@@ -56,17 +58,27 @@ const ContactUs = () => {
   };
 
   return (
-    <section className="py-16 px-4 bg-[#fcf8f3] text-gray-900">
+    <section
+      className={`px-4 py-16 xl:py-6 ${modeClass} ${
+        darkMode
+          ? "bg-gradient-to-b from-[#141b2d] to-[#0e1015] text-[#f1f1f1]"
+          : "bg-gradient-to-b from-[#f4f1ee] to-[#e8e6e1] text-[#1a1a1a]"
+      }`}
+    >
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl font-serif font-bold text-center mb-8 text-[#5a4634]">
+        <h2 className="mb-8 font-serif text-4xl font-bold text-center ">
           Contact Us
         </h2>
 
-        <div className="bg-white rounded-xl shadow-md p-8 border border-[#e0e0e0]">
+        <div
+          className={` rounded-xl shadow-md p-8 border border-[#e0e0e0] ${
+            darkMode ? "bg-[#2d2d2d] text-white" : "bg-white text-black"
+          } `}
+        >
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium ">
                   Name *
                 </label>
                 <input
@@ -74,13 +86,13 @@ const ContactUs = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#b88946]"
+                  className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee]  focus:outline-none focus:ring-2 focus:ring-[#b88946]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-medium ">
                   Email *
                 </label>
                 <input
@@ -88,21 +100,21 @@ const ContactUs = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#b88946]"
+                  className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] focus:outline-none focus:ring-2 focus:ring-[#b88946]"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block mb-2 text-sm font-medium ">
                 Category *
               </label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#b88946]"
+                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee]  focus:outline-none focus:ring-2 focus:ring-[#b88946]"
                 required
               >
                 <option value="general">General Inquiry</option>
@@ -113,7 +125,7 @@ const ContactUs = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block mb-2 text-sm font-medium ">
                 Subject *
               </label>
               <input
@@ -121,13 +133,13 @@ const ContactUs = () => {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#b88946]"
+                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] focus:outline-none focus:ring-2 focus:ring-[#b88946]"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block mb-2 text-sm font-medium">
                 Your Suggestion *
               </label>
               <textarea
@@ -135,14 +147,14 @@ const ContactUs = () => {
                 value={formData.suggestion}
                 onChange={handleChange}
                 rows="5"
-                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#b88946]"
+                className="w-full px-4 py-2 border border-[#d6b28d] rounded-lg bg-[#faf4ee]  focus:outline-none focus:ring-2 focus:ring-[#b88946]"
                 required
               />
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-sm text-red-500">{error}</p>}
             {success && (
-              <p className="text-green-600 text-sm">
+              <p className="text-sm text-green-600">
                 Thank you! Your suggestion has been submitted successfully.
               </p>
             )}
@@ -150,7 +162,7 @@ const ContactUs = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#b88946] to-[#d6b28d] text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-[#b88946] to-[#d6b28d] py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
             >
               {loading ? "Submitting..." : "Send Suggestion"}
             </button>

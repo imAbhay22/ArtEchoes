@@ -22,7 +22,7 @@ const AuthPopUpHomePage = () => {
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-500 backdrop-blur-sm">
+    <div className="fixed inset-0 flex items-center justify-center text-black z-500 backdrop-blur-sm">
       <div
         className=" sm:w-[40vw]  md:w-[40vw] h-[50vh] rounded-lg p-[2vh] text-center flex flex-col justify-center bg-cover bg-center relative shadow-2xl"
         style={{ backgroundImage: `url(${img})` }}

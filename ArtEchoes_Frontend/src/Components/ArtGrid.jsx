@@ -1,16 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import ArtDetailModal from "./ArtDetailModal";
 import { useAppContext } from "./AppContext";
+import { DarkContext } from "./Mode/DarkContext";
 import image1 from "../assets/Images/AboutImg.jpg";
 
 const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
   const { loading, error } = useAppContext();
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  if (loading) return <div className="text-center">Loading artworks...</div>;
-  if (error)
-    return <div className="text-center">Error loading artworks: {error}</div>;
+  const { darkMode } = useContext(DarkContext);
 
   const internalDefaultArtworks = defaultArtworks || [
     { id: 1, title: "Sunset Glow", artist: "John Doe", image: image1 },
@@ -35,7 +33,11 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
   ];
 
   return (
-    <div className="pl-8 mt-10 pr-8 min-h-[50vh] pb-8 w-full">
+    <div
+      className={`pl-8 mt-10 pr-8 min-h-[50vh] pb-8 w-full transition-colors duration-500 ${
+        darkMode ? "bg-[#1e1e1e] text-[#f4f4f4]" : "bg-white text-gray-800"
+      }`}
+    >
       {/* Search Input */}
       <div className="flex justify-center mb-4">
         <input
@@ -43,7 +45,12 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
           placeholder="Search artworks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 bg-transparent focus:bg-blend-darken border-l-2 border-b-4 border-t-0 border-r-0 border-gray-800 rounded-lg shadow-md w-[70%] focus:outline-none font-bold text-gray-800"
+          className={`p-2 rounded-md shadow-md w-[70%] font-semibold focus:outline-none transition-all duration-300
+            ${
+              darkMode
+                ? "bg-[#2b2b2b] text-white placeholder:text-gray-400 border border-[#444]"
+                : "bg-[#f9f9f9] text-gray-800 border border-gray-300"
+            }`}
         />
       </div>
 
@@ -52,7 +59,9 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
         {itemsWithPlaceholders.map((artwork, index) => (
           <div
             key={artwork?.id || index}
-            className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-[1.03] hover:shadow-lg w-full md:w-[47%] lg:w-[30%] xl:w-[22%] aspect-[5/4] m-3 cursor-pointer"
+            className={`rounded-xl overflow-hidden transition-transform duration-300 transform hover:scale-[1.03] hover:shadow-lg w-full md:w-[47%] lg:w-[30%] xl:w-[22%] aspect-[5/4] m-3 cursor-pointer ${
+              darkMode ? "bg-[#2a2a2a]" : "bg-white"
+            }`}
             onClick={() => {
               if (!artwork?.filePath && !artwork?.image) return;
               setSelectedArtwork(artwork);
@@ -75,9 +84,8 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
                   alt={artwork.title}
                   className="object-cover w-full h-full transition-transform duration-500 transform group-hover:scale-105"
                 />
-
                 {/* Overlay Title */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/80 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/70 via-black/20 to-transparent">
                   <h3 className="font-semibold truncate text-md">
                     {artwork.title}
                   </h3>
@@ -87,10 +95,22 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
             ) : (
               // Skeleton
               <div className="h-full animate-pulse">
-                <div className="w-full h-full bg-gray-200" />
+                <div
+                  className={`w-full h-full ${
+                    darkMode ? "bg-[#3a3a3a]" : "bg-gray-200"
+                  }`}
+                />
                 <div className="p-4 space-y-2">
-                  <div className="w-3/4 h-4 bg-gray-200 rounded" />
-                  <div className="w-1/2 h-4 bg-gray-200 rounded" />
+                  <div
+                    className={`w-3/4 h-4 rounded ${
+                      darkMode ? "bg-[#4a4a4a]" : "bg-gray-200"
+                    }`}
+                  />
+                  <div
+                    className={`w-1/2 h-4 rounded ${
+                      darkMode ? "bg-[#4a4a4a]" : "bg-gray-200"
+                    }`}
+                  />
                 </div>
               </div>
             )}

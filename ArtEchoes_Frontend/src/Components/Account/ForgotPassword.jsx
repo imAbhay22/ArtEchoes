@@ -34,16 +34,16 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full border border-gray-200">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+    <div className="flex items-center justify-center min-h-screen text-black bg-gradient-to-r from-yellow-100 via-orange-200 to-red-100">
+      <div className="w-full max-w-md p-8 bg-white border border-gray-200 rounded-lg shadow-lg">
+        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
           Forgot Password
         </h2>
-        <p className="text-center text-gray-500 mb-4">
+        <p className="mb-4 text-center text-gray-500">
           Enter your email to reset your password.
         </p>
-        {message && <p className="text-green-600 text-sm mb-3">{message}</p>}
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {message && <p className="mb-3 text-sm text-green-600">{message}</p>}
+        {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
@@ -55,16 +55,16 @@ const ForgotPassword = () => {
           />
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white py-2 rounded-lg font-bold hover:bg-orange-600 transition duration-300"
+            className="w-full py-2 font-bold text-white transition duration-300 bg-orange-500 rounded-lg hover:bg-orange-600"
           >
             Submit
           </button>
         </form>
-        <p className="text-center text-gray-600 mt-4">
+        <p className="mt-4 text-center text-gray-600">
           Remember your password?{" "}
           <Link
             to="/login"
-            className="text-orange-500 font-semibold hover:underline"
+            className="font-semibold text-orange-500 hover:underline"
           >
             Log In
           </Link>

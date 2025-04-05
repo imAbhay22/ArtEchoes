@@ -1,12 +1,22 @@
 import AboutImg from "/src/assets/Images/AboutImg.jpg";
+import { DarkContext } from "../Mode/DarkContext";
+import { useContext } from "react";
 
 const AboutUs = () => {
+  const { darkMode } = useContext(DarkContext);
+  const modeClass = darkMode ? "dark-mode" : "light-mode";
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#faf8f5] to-[#ebe6df] text-[#333]">
+    <div
+      className={`min-h-screen ${modeClass} ${
+        darkMode
+          ? "bg-gradient-to-b from-[#141b2d] to-[#0e1015] text-[#f1f1f1]"
+          : "bg-gradient-to-b from-[#f4f1ee] to-[#e8e6e1] text-[#1a1a1a]"
+      }`}
+    >
       <main className="px-6 py-16 mx-auto max-w-7xl sm:px-8 lg:px-12">
         {/* Hero Section */}
         <div className="mb-16 text-center">
-          <h1 className="text-5xl font-extrabold text-[#2c2c2c] mb-4 tracking-wide">
+          <h1 className="mb-4 text-5xl font-extrabold tracking-wide">
             About ArtEcho
           </h1>
           <p className="text-xl text-[#555] max-w-3xl mx-auto leading-relaxed">
@@ -27,9 +37,7 @@ const AboutUs = () => {
               />
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-[#2c2c2c] mb-6">
-                Our Story
-              </h2>
+              <h2 className="mb-6 text-3xl font-bold ">Our Story</h2>
               <p className="text-[#555] text-lg leading-relaxed mb-4">
                 ArtEcho was founded with a vision—to create an online gallery
                 that resonates with the elegance of physical exhibitions.
