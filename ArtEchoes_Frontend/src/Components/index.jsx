@@ -43,3 +43,5 @@ export { default as Surrealism } from "./ArtFiles/Surrealism";
 export { default as AIArt } from "./ArtFiles/AIArt";
 export { default as ThreeDArt } from "./ArtFiles/ThreeDArt";
 export { default as VectorArt } from "./ArtFiles/VectorArt";
+export { default as ScrollToTop } from "./ScrollToTop";
+export { default as AppRoutes } from "./AppRoutes";

@@ -1,11 +1,25 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // If you still need navigation, otherwise remove it.
+import { useNavigate } from "react-router-dom";
+import image1 from "../assets/Images/AboutImg.jpg"; // Import the default image
 
 const ArtDetailModal = ({ artwork, onClose }) => {
-  const navigate = useNavigate(); // Optional: if you want to navigate on close instead of using onClose.
+  const navigate = useNavigate();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   if (!artwork) return null;
+
+  // Get the correct image source based on available properties
+  const getImageSrc = () => {
+    if (artwork.filePath) {
+      return encodeURI(
+        `http://localhost:5000/${artwork.filePath.replace(/\\/g, "/")}`
+      );
+    } else if (artwork.image) {
+      return artwork.image;
+    } else {
+      return image1; // Default image as fallback
+    }
+  };
 
   // Full-screen preview mode
   if (isFullScreen) {
@@ -13,7 +27,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
       <div className="fixed inset-0 flex items-center justify-center bg-black z-999">
         <img
           loading="lazy"
-          src={`http://localhost:5000/${artwork.filePath.replace(/\\/g, "/")}`}
+          src={getImageSrc()}
           alt={artwork.title}
           className="object-contain w-full h-full cursor-pointer"
           onClick={() => setIsFullScreen(false)}
@@ -27,12 +41,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
       <div className="bg-white rounded-xl w-[75vw] h-[75vh] flex flex-col relative">
         {/* Close Button */}
         <button
-          onClick={() => {
-            // You can either use onClose() to clear the selected artwork...
-            onClose();
-            // ...or use navigate(-1) if you decide to go back a route.
-            // navigate(-1);
-          }}
+          onClick={onClose}
           className="absolute text-4xl text-white transition-colors -top-8 -left-8 hover:text-gray-300"
         >
           ×
@@ -52,10 +61,7 @@ const ArtDetailModal = ({ artwork, onClose }) => {
         <div className="h-[70%] w-full overflow-hidden">
           <img
             loading="lazy"
-            src={`http://localhost:5000/${artwork.filePath.replace(
-              /\\/g,
-              "/"
-            )}`}
+            src={getImageSrc()}
             alt={artwork.title}
             className="object-cover w-full h-full"
           />
