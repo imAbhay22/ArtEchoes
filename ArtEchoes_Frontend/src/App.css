@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Add these styles */
+/* Modal transitions */
 .modal-enter {
   opacity: 0;
   transform: scale(0.95);
@@ -22,16 +22,17 @@
   transition: opacity 300ms, transform 300ms;
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Hides the scrollbar */
+/* For IE and Edge */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* hides scrollbar in IE and Edge */
+  scrollbar-width: none; /* hides scrollbar in Firefox */
 }
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* hides scrollbar in Chrome, Safari, and Opera */
 }
 
-/* for applying colors to light mode and dark mode */
-
+/* Light and Dark mode color variables */
 :root {
   --bg-color-light: #faf3e0;
   --bg-color-dark: #262626;
@@ -49,21 +50,17 @@
   color: var(--text-color-dark);
 }
 
-/* Custom Scrollbar for .hide-scrollbar */
-.hide-scrollbar::-webkit-scrollbar {
-  height: 8px; /* set the height for horizontal scrollbar */
+/* Effects for center artwork in infinite scroll */
+.center-artwork {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4); /* center artwork shadow effect */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* center artwork border */
+  transition: all 0.3s ease-in-out; /* smooth transition effect */
 }
 
-.hide-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+.light-mode {
+  transition: all 0.3s ease-in-out;
 }
 
-.hide-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #504b4b; /* Gray color for the thumb */
-  border-radius: 12px;
-}
-
-.hide-scrollbar {
-  scrollbar-width: thick;
-  scrollbar-color: #343333 transparent;
+.dark-mode {
+  transition: all 0.3s ease-in-out;
 }

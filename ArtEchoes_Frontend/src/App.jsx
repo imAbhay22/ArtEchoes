@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import {
@@ -48,10 +48,16 @@ import {
   useAuth,
   InfiniteScroll,
 } from "./Components";
+import weeklyImage1 from "./assets/Images/weekly1.jpg";
+import ArtGrid from "./Components/ArtGrid";
+import { DarkContext } from "./Components/Mode/DarkContext";
 
 const App = () => {
   const { isAuthenticated } = useAuth();
   const [showModal, setShowModal] = useState(false);
+
+  const { darkMode } = useContext(DarkContext);
+  const modeClass = darkMode ? "dark-mode" : "light-mode";
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -62,8 +68,41 @@ const App = () => {
     }
   }, [isAuthenticated]);
 
+  const WeeklyTopArt = [
+    {
+      id: 1,
+      title: "Masterpiece One",
+      artist: "Emily Rose",
+      image: weeklyImage1,
+    },
+    {
+      id: 2,
+      title: "Masterpiece Two",
+      artist: "James Carter",
+      image: weeklyImage1,
+    },
+    {
+      id: 3,
+      title: "Masterpiece Three",
+      artist: "Sophia White",
+      image: weeklyImage1,
+    },
+    {
+      id: 4,
+      title: "Abstract Vision",
+      artist: "Olivia Harper",
+      image: weeklyImage1,
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-neutral-800 to-white">
+    <div
+      className={`flex min-h-screen ${modeClass} ${
+        darkMode
+          ? "bg-gradient-to-b from-[#141b2d] to-[#0e1015] text-[#f1f1f1]"
+          : "bg-gradient-to-b from-[#f4f1ee] to-[#e8e6e1] text-[#1a1a1a]"
+      }`}
+    >
       <Sidebar />
       <div className="relative w-full">
         <Navigation />
@@ -75,14 +114,14 @@ const App = () => {
               element={
                 <>
                   <HeroSection />
-                  <h2 className="mb-4 ml-10 text-4xl font-bold text-center mt-15">
+                  <h2 className="mb-4 ml-10 text-4xl font-bold text-center">
                     All Artworks
                   </h2>
                   <InfiniteScroll />
                   <h2 className="mt-10 mb-4 text-xl font-bold text-center">
                     This Week's top Art, rated by yours truly, hehe..
                   </h2>
-                  <WeeklyTopArt />
+                  <ArtGrid defaultArtworks={WeeklyTopArt} />
                   <FeaturedArtistsCarousel />
                   <AboutUsHome />
                 </>

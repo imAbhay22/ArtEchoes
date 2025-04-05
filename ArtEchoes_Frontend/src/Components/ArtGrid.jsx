@@ -3,7 +3,7 @@ import ArtDetailModal from "./ArtDetailModal";
 import { useAppContext } from "./AppContext";
 import image1 from "../assets/Images/AboutImg.jpg";
 
-const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
+const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
   const { loading, error } = useAppContext();
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,14 +12,15 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
   if (error)
     return <div className="text-center">Error loading artworks: {error}</div>;
 
-  const defaultArtworks = [
+  const internalDefaultArtworks = defaultArtworks || [
     { id: 1, title: "Sunset Glow", artist: "John Doe", image: image1 },
     { id: 2, title: "Mountain View", artist: "Jane Smith", image: image1 },
     { id: 3, title: "City Lights", artist: "Alex Brown", image: image1 },
     { id: 4, title: "Ocean Breeze", artist: "Sarah Lee", image: image1 },
   ];
 
-  const itemsToDisplay = artworks.length > 0 ? artworks : defaultArtworks;
+  const itemsToDisplay =
+    artworks.length > 0 ? artworks : internalDefaultArtworks;
 
   const filteredArtworks = itemsToDisplay.filter(
     (artwork) =>
@@ -51,16 +52,14 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
         {itemsWithPlaceholders.map((artwork, index) => (
           <div
             key={artwork?.id || index}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow w-[60.66vw] h-[26.66vh] lg:w-[16.66vw] lg:h-[16.66vh] m-2"
+            className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-[1.03] hover:shadow-lg w-full md:w-[47%] lg:w-[30%] xl:w-[22%] aspect-[5/4] m-3 cursor-pointer"
+            onClick={() => {
+              if (!artwork?.filePath && !artwork?.image) return;
+              setSelectedArtwork(artwork);
+            }}
           >
             {artwork ? (
-              <div
-                onClick={() => {
-                  if (!artwork.filePath) return;
-                  setSelectedArtwork(artwork);
-                }}
-                className="relative h-full cursor-pointer"
-              >
+              <div className="relative w-full h-full overflow-hidden group">
                 <img
                   loading="lazy"
                   src={
@@ -71,20 +70,22 @@ const ArtGrid = ({ artworks = [], emptyItems = 0 }) => {
                             "/"
                           )}`
                         )
-                      : image1
+                      : artwork.image || image1
                   }
                   alt={artwork.title}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full transition-transform duration-500 transform group-hover:scale-105"
                 />
 
-                {/* Title & Artist Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-2 text-white bg-black/70">
-                  <h3 className="font-semibold text-md">{artwork.title}</h3>
+                {/* Overlay Title */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 text-white bg-gradient-to-t from-black/80 to-transparent">
+                  <h3 className="font-semibold truncate text-md">
+                    {artwork.title}
+                  </h3>
                   <p className="text-xs">{artwork.artist}</p>
                 </div>
               </div>
             ) : (
-              // Skeleton loading state
+              // Skeleton
               <div className="h-full animate-pulse">
                 <div className="w-full h-full bg-gray-200" />
                 <div className="p-4 space-y-2">
