@@ -28,7 +28,7 @@ const DarkModeToggle = () => {
               ${darkMode ? "translate-x-6" : "translate-x-1"}`}
           ></div>
         </div>
-        <div className="ml-3 font-medium text-sm text-gray-800 dark:text-gray-500">
+        <div className="hidden ml-3 text-sm font-medium text-gray-800 md:flex dark:text-gray-500">
           {darkMode ? "Dark Mode" : "Light Mode"}
         </div>
       </label>

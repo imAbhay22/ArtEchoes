@@ -4,7 +4,7 @@ import { useEffect, useRef, useContext } from "react";
 import { DarkContext } from "./Mode/DarkContext";
 
 import Logo from "./Navigation/Logo";
-import InboxIcon from "./Navigation/InboxIcon";
+//  import InboxIcon from "./Navigation/InboxIcon";
 import SearchBar from "./Navigation/SearchBar";
 import ProfileDropdown from "./Navigation/ProfileDropdown";
 import NavDropdown from "./Navigation/NavDropDown";
@@ -94,12 +94,12 @@ const Navigation = () => {
           </div>
 
           {/* Right-side Icons */}
-          <div className="flex items-center justify-end flex-1 pl-5 ml-5 space-x-4 xl:flex-none xl:ml-0">
+          <div className="flex items-center justify-end flex-1 ml-5 space-x-4 md:pl-5 xl:flex-none xl:ml-0">
             <SearchBar
               setSearchQuery={setSearchQuery}
               className="w-28 md:w-48 xl:w-64"
             />
-            <InboxIcon className="hidden xl:block" />
+            {/* <InboxIcon className="hidden xl:block" /> */}
             <ProfileDropdown />
             <DarkModeToggle />
           </div>

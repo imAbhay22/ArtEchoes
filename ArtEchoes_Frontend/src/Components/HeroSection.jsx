@@ -39,7 +39,7 @@ const HeroSection = () => {
           <div className="relative w-full h-full">
             {heroImages.map((img, index) => (
               <img
-                loading="lazy"
+                loading="eager"
                 key={img}
                 src={img}
                 alt="Gallery Background"
