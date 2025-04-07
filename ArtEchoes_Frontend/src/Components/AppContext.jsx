@@ -22,7 +22,6 @@ export const AppProvider = ({ children }) => {
         window.location.hostname === "localhost"
           ? "http://localhost:5000/api/artworks"
           : "http://192.168.1.100:5000/api/artworks";
-      console.log("Fetching artworks from:", apiUrl);
 
       const response = await fetch(apiUrl);
       if (!response.ok) throw new Error("Failed to fetch artworks");
