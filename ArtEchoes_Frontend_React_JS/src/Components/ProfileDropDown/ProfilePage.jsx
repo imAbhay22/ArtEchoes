@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
 import defaultImg from "../../assets/FeaturedArtist/pakf.jpg";
+import image1 from "../../assets/Images/AboutImg.jpg";
 
 const ProfilePage = () => {
   const { user } = useAuth();
