@@ -135,6 +135,7 @@ const UploadArt = () => {
     formData.append("title", title);
     formData.append("categories", JSON.stringify([finalCategory])); // Use the final category here
     formData.append("description", description);
+    console.log("Price from state:", price);
     formData.append("price", price);
     formData.append("tags", JSON.stringify(tags));
     formData.append("artwork", file);

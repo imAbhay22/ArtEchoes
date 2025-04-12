@@ -2,7 +2,7 @@ import { Router } from "express";
 import fs from "fs";
 import path from "path";
 import multer, { diskStorage } from "multer";
-import { authenticate } from "./authMiddleware.js"; // Import your auth middleware
+import { authenticate } from "../authentication/authMiddleware.js"; // Import your auth middleware
 import Profile from "../models/profile.js";
 import Art from "../models/artModel.js"; // Import the Art model
 
