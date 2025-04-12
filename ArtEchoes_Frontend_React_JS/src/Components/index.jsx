@@ -4,6 +4,7 @@ export { default as InfiniteScroll } from "./InfiniteScroll";
 export { default as Sidebar } from "./SideBar";
 export { default as Footer } from "./Footer";
 export { default as PaintingsPage } from "./ArtFiles/PaintingsPage";
+export { default as Drawing } from "./ArtFiles/Drawing";
 export { default as ArtDetailModal } from "./ArtDetailModal";
 export { default as TraditionalArt } from "./ArtFiles/TraditionalArt";
 export { default as UploadArt } from "./Navigation/Upload";

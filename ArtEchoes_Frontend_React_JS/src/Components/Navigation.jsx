@@ -42,7 +42,7 @@ const Navigation = () => {
                   { label: "Portrait Painting", to: "/portrait-painting" },
                   { label: "Landscape Painting", to: "/landscape-painting" },
                 ],
-                defaultTo: "/oil-painting",
+                defaultTo: "/painting",
               },
               {
                 title: "Digital & New Media",

@@ -41,6 +41,7 @@ import {
   Surrealism,
   InfiniteScroll,
   FeaturedArtistsCarousel,
+  Drawing,
 } from "./index";
 
 import ArtGrid from "./ArtGrid";
@@ -94,7 +95,8 @@ const AppRoutes = () => {
           </>
         }
       />
-      <Route path="/paintings" element={<PaintingsPage />} />
+      <Route path="/painting" element={<PaintingsPage />} />
+      <Route path="/drawing" element={<Drawing />} />
       <Route path="/artwork/:id" element={<ArtDetailModal />} />
 
       {/* Category routes */}

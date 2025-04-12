@@ -11,3 +11,7 @@ cleanupUploads: Cleans the uploads directory by deleting temporary files while k
 clip script.py
 
 to classify the art using a pre built model
+
+#react native project startup
+
+npx create-expo-app React_Native_mobile // to create the app ( previously we had to use expo init project_name but its depriciated now )

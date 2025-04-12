@@ -1,6 +1,5 @@
 import express from "express";
 import multer from "multer";
-import fs from "fs";
 import path from "path";
 import Art from "../models/artModel.js";
 import { classifyImage, moveFile } from "../utils/fileUtils.js";
@@ -50,19 +49,14 @@ router.post(
         artist = "",
         categories,
         description,
+        price,
         tags,
         userId,
       } = req.body;
 
-      // Auto classification branch: if there's no title, classify and return result
+      // Ensure title is provided
       if (!title) {
-        const classification = await classifyImage(req.file.path);
-        const newPath = moveFile(req.file.path, classification);
-        return res.json({
-          message: "Auto classification succeeded",
-          category: classification,
-          path: newPath ? newPath.replace(/\\/g, "/") : "",
-        });
+        return res.status(400).json({ error: "Title is required" });
       }
 
       // Ensure required fields are provided for final upload
@@ -107,6 +101,7 @@ router.post(
         artist: artist || "Unknown Artist",
         categories: finalCategories,
         description: description || "",
+        price: price !== undefined ? parseFloat(price) : 0,
         tags: tags || [],
         filePath: relativeFilePath,
         userId,
@@ -115,13 +110,16 @@ router.post(
       await newArt.save();
 
       res.status(201).json({
-        message: "Artwork uploaded successfully",
+        message: `Artwork uploaded successfully (and Categorized as "${categoryForMove}")`,
         artwork: {
           id: newArt._id,
           title: newArt.title,
           artist: newArt.artist,
           filePath: newArt.filePath,
           userId: newArt.userId,
+          categories: finalCategories,
+          categorizedAs: categoryForMove,
+          price: newArt.price,
         },
       });
     } catch (error) {

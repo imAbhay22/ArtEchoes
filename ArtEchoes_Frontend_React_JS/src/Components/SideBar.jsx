@@ -22,11 +22,16 @@ const Sidebar = () => {
   }, [setIsSidebarOpen]);
 
   const categories = [
+    { name: "Painting", path: "/painting" },
+    { name: "Drawing", path: "/drawing" },
     { name: "Oil Painting", path: "/oil-painting" },
     { name: "Watercolor", path: "/watercolor" },
     { name: "Acrylic Painting", path: "/acrylic-painting" },
     { name: "Sketch", path: "/sketch" },
     { name: "Digital Art", path: "/digital-art" },
+    { name: "Vector Art", path: "/vector-art" },
+    { name: "3D Art", path: "/3d-art" },
+    { name: "AI Art", path: "/ai-art" },
     { name: "Sculpture", path: "/sculpture" },
     { name: "Photography", path: "/photography" },
     { name: "Mixed Media", path: "/mixed-media" },

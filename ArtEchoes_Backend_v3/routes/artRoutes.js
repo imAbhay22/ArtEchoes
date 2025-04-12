@@ -85,6 +85,7 @@ router.post(
         artist = "",
         categories,
         description,
+        price,
         tags,
         userId,
       } = req.body;
@@ -103,6 +104,7 @@ router.post(
         artist: artist || "Unknown Artist",
         categories,
         description: description || "",
+        price: price !== undefined ? parseFloat(price) : 0,
         tags: tags || [],
         filePath: req.file.path.replace(/\\/g, "/"),
         userId,

@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className={` ${modeClass} py-8 text-center`}>
       <p className="text-lg font-semibold">Join us on our journey.</p>
-      <div className="mt-4 flex justify-center space-x-4">
+      <div className="flex justify-center mt-4 space-x-4">
         {["🌟", "✨", "🎨", "💫", "🔥"].map((emoji, index) => (
           <span
             key={index}
@@ -19,16 +19,31 @@ const Footer = () => {
           </span>
         ))}
       </div>
-      <p className="mt-4 text-sm">© 2025 ArtEcho. All rights reserved.</p>
+      <p className="mt-4 text-sm">© 2025 ArtEchoes. All rights reserved.</p>
       <div className="mt-2 space-x-4">
-        <a href="#terms" className="hover:text-[#d6b28d]">
-          Terms
+        <a
+          href="https://www.instagram.com/sketch_.otaku/"
+          className="hover:text-[#d6b28d]"
+          target="_blank"
+          rel="noopener noreferrer" // it is important to add this to prevent security issues
+        >
+          Instagram
         </a>
-        <a href="#privacy" className="hover:text-[#d6b28d]">
-          Privacy
+        <a
+          href="https://github.com/imAbhay22"
+          className="hover:text-[#d6b28d] "
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
         </a>
-        <a href="#contact" className="hover:text-[#d6b28d]">
-          Contact
+        <a
+          href="https://www.linkedin.com/in/abhay-choudhary-/"
+          className="hover:text-[#d6b28d]"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
         </a>
       </div>
     </footer>

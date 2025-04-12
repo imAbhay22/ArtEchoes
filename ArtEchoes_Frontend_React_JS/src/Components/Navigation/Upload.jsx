@@ -2,16 +2,33 @@ import { useState, useContext } from "react";
 import { useAppContext } from "../AppContext";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { DarkContext } from "../Mode/DarkContext";
+import axios from "axios";
 
 const categoryOptions = [
   "Auto",
-  "Painting",
-  "Sculpture",
-  "Digital Art",
-  "Photography",
-  "Drawing",
-  "Mixed Media",
-  "Printmaking",
+  "painting",
+  "drawing",
+  "oil painting",
+  "watercolor",
+  "acrylic painting",
+  "sketch",
+  "digital art",
+  "sculpture",
+  "photography",
+  "mixed media",
+  "collage",
+  "abstract art",
+  "impressionism",
+  "pop art",
+  "minimalism",
+  "conceptual art",
+  "printmaking",
+  "portrait painting",
+  "landscape painting",
+  "modern art",
+  "street art",
+  "realism",
+  "surrealism",
 ];
 
 const UploadArt = () => {
@@ -20,8 +37,9 @@ const UploadArt = () => {
   const modeClass = darkMode ? "dark-mode" : "light-mode";
 
   const [title, setTitle] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Auto");
   const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [tags, setTags] = useState([]);
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
@@ -45,12 +63,17 @@ const UploadArt = () => {
     setTags(extractHashtags(text));
   };
 
+  const handlePriceChange = (e) => {
+    const value = e.target.value.replace(/[^0-9.]/g, ""); // to remove unnecessary characters like letters and symbols
+    setPrice(value);
+  };
+
   const removeTag = (index) => {
-    setTags((prev) => prev.filter((_, i) => i !== index));
+    setTags((prev) => prev.filter((_, i) => i !== index)); // to remove the tag at the specified index when user clicks on the "×" button
   };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+    const selectedFile = e.target.files[0]; // to get the selected file from the pc
     if (selectedFile) {
       setFile(selectedFile);
     }
@@ -62,21 +85,18 @@ const UploadArt = () => {
     autoFormData.append("artwork", file);
 
     try {
-      const response = await fetch(autoApiUrl, {
-        method: "POST",
-        body: autoFormData,
+      const response = await axios.post(autoApiUrl, autoFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // it is Important to tell the server that we're sending a file
+        },
       });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "Auto classification failed");
-      }
-      return result.category;
+
+      return response.data.category;
     } catch (err) {
       setError(err.message);
       throw err;
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -90,13 +110,15 @@ const UploadArt = () => {
     }
 
     let finalCategory = selectedCategory;
+
+    // If "Auto" is selected, classify the file automatically
     if (selectedCategory === "Auto") {
       try {
         const autoCategory = await autoCategorize(file);
-        finalCategory = autoCategory;
+        finalCategory = autoCategory; // Update finalCategory with the auto classification
       } catch (err) {
         setLoading(false);
-        return;
+        return; // Stop further execution if auto categorization fails
       }
     }
 
@@ -111,38 +133,51 @@ const UploadArt = () => {
 
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("categories", JSON.stringify([finalCategory]));
+    formData.append("categories", JSON.stringify([finalCategory])); // Use the final category here
     formData.append("description", description);
+    formData.append("price", price);
     formData.append("tags", JSON.stringify(tags));
     formData.append("artwork", file);
     formData.append("userId", userId);
     formData.append("artist", artistName);
 
     try {
-      const response = await fetch(`${API_BASE}/api/upload/classify`, {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to upload artwork");
-      }
-      setSuccess("Artwork uploaded successfully!");
-      await fetchArtworks();
+      const response = await axios.post(
+        `${API_BASE}/api/upload/classify`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
+      const result = response.data;
+
+      // Show categorized info (either auto or user-selected)
+      const categorizedAs = result.artwork?.categorizedAs || finalCategory;
+      const artworkPrice = result.artwork?.price;
+
+      setSuccess(
+        `Artwork uploaded successfully! Categorized as "${categorizedAs}", priced at ₹${artworkPrice}`
+      );
+
+      await fetchArtworks(); // Fetch the updated artworks list after upload
+
+      // Clear form fields after successful upload
       setTitle("");
       setSelectedCategory("");
       setDescription("");
+      setPrice("");
       setTags([]);
       setFile(null);
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.message || error.message);
       console.error("Upload Error:", error);
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div
       className={`min-h-screen ${modeClass} ${
@@ -182,24 +217,26 @@ const UploadArt = () => {
               </button>
               {showOptions && (
                 <div
-                  className={`absolute z-10 w-full mt-2 border rounded-md shadow-md ${
+                  className={`absolute z-10 w-full mt-2 border rounded-md shadow-md max-h-60 overflow-y-auto ${
                     darkMode ? "bg-[#374151]" : "bg-white"
                   }`}
                 >
-                  {categoryOptions.map((cat) => (
-                    <div
-                      key={cat}
-                      className={`p-2 cursor-pointer ${
-                        darkMode ? "hover:bg-[#4b5563]" : "hover:bg-gray-100"
-                      }`}
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setShowOptions(false);
-                      }}
-                    >
-                      {cat}
-                    </div>
-                  ))}
+                  <div className="grid grid-cols-2 gap-1 p-2">
+                    {categoryOptions.map((cat) => (
+                      <div
+                        key={cat}
+                        className={`p-2 cursor-pointer rounded-md text-sm ${
+                          darkMode ? "hover:bg-[#4b5563]" : "hover:bg-gray-100"
+                        }`}
+                        onClick={() => {
+                          setSelectedCategory(cat);
+                          setShowOptions(false);
+                        }}
+                      >
+                        {cat}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -237,6 +274,17 @@ const UploadArt = () => {
                   </span>
                 ))}
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Price </label>
+              <input
+                value={price}
+                onChange={handlePriceChange}
+                min="0"
+                type="number"
+                className="block w-full mt-1 border-b border-gray-300 bg-transparent focus:border-[#b88946] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder="Enter price in rs"
+              />
             </div>
 
             <div>

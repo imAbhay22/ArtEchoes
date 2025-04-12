@@ -31,7 +31,7 @@ const FeaturedArtistsCarousel = () => {
       <h2 className="text-[calc(1.5vw+1rem)] font-bold text-center mb-[3vh]">
         Featured Artists of the Month
       </h2>
-      <div className="w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide px-[2vw] md:px-[4vw] gap-[2vw] pb-[4vh] flex justify-center">
+      <div className="w-full overflow-x-auto py-[3vh] overflow-y-visible snap-x snap-mandatory scrollbar-hide px-[2vw] md:px-[4vw] gap-[2vw] pb-[4vh] flex justify-center">
         {artists.map((artist) => (
           <motion.div
             key={artist.id}
@@ -39,7 +39,7 @@ const FeaturedArtistsCarousel = () => {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="max-w-[25vw] mx-auto aspect-square bg-gray-200 rounded-2xl overflow-hidden relative">
+            <div className="max-w-[25vw]  mx-auto aspect-square bg-gray-200 rounded-2xl overflow-hidden relative">
               <img
                 loading="lazy"
                 src={artist.image}
