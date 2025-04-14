@@ -45,32 +45,35 @@ import {
 } from "./index";
 
 import ArtGrid from "./ArtGrid";
-import weeklyImage1 from "../assets/Images/weekly1.jpg";
+import Glubglub_Bottolino_Quackafunk from "../assets/Images/Glubglub_Bottolino_Quackafunk.webp";
+import mcQueen from "../assets/Images/mcQueen.jpg";
+import torotelo from "../assets/Images/torotelo.webp";
+import Chefcrabracadabra from "../assets/Images/Chefcrabracadabra.webp";
 
 const WeeklyTopArt = [
   {
     id: 1,
-    title: "Masterpiece One",
+    title: "mcQueen - The Art of Fashion",
     artist: "Emily Rose",
-    image: weeklyImage1,
+    image: mcQueen,
   },
   {
     id: 2,
-    title: "Masterpiece Two",
+    title: "torotelo - The Enchanted Forest",
     artist: "James Carter",
-    image: weeklyImage1,
+    image: torotelo,
   },
   {
     id: 3,
-    title: "Masterpiece Three",
-    artist: "Sophia White",
-    image: weeklyImage1,
+    title: "Chefcrabracadabra - Culinary Magic",
+    artist: "Sophia Lee",
+    image: Chefcrabracadabra,
   },
   {
     id: 4,
-    title: "Abstract Vision",
-    artist: "Olivia Harper",
-    image: weeklyImage1,
+    title: "Glubglub Bottolino Quackafunk",
+    artist: "Liam Johnson",
+    image: Glubglub_Bottolino_Quackafunk,
   },
 ];
 
