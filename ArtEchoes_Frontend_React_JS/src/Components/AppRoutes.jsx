@@ -42,6 +42,7 @@ import {
   InfiniteScroll,
   FeaturedArtistsCarousel,
   Drawing,
+  SearchResultsPage,
 } from "./index";
 
 import ArtGrid from "./ArtGrid";
@@ -98,11 +99,11 @@ const AppRoutes = () => {
           </>
         }
       />
-      <Route path="/painting" element={<PaintingsPage />} />
-      <Route path="/drawing" element={<Drawing />} />
       <Route path="/artwork/:id" element={<ArtDetailModal />} />
 
       {/* Category routes */}
+      <Route path="/painting" element={<PaintingsPage />} />
+      <Route path="/drawing" element={<Drawing />} />
       <Route path="/oil-painting" element={<OilPainting />} />
       <Route path="/watercolor" element={<Watercolor />} />
       <Route path="/acrylic-painting" element={<AcrylicPainting />} />
@@ -127,8 +128,8 @@ const AppRoutes = () => {
       <Route path="/vector-art" element={<VectorArt />} />
       <Route path="/3d-art" element={<ThreeDArt />} />
       <Route path="/ai-art" element={<AIArt />} />
-
       <Route path="/traditional-art" element={<TraditionalArt />} />
+
       <Route path="/upload" element={<UploadArt />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact-us" element={<ContactUs />} />
@@ -137,6 +138,8 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/profile" element={<ProfilePage />} />
+
+      <Route path="/search" element={<SearchResultsPage />} />
     </Routes>
   );
 };

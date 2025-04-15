@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useAuth } from "../AuthContext";
 import axios from "axios";
 import defaultImg from "../../assets/FeaturedArtist/pakf.jpg";
 import image1 from "../../assets/Images/AboutImg.jpg";
+import { DarkContext } from "../Mode/DarkContext";
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ const ProfilePage = () => {
     artworks: [],
   });
   const [previewImage, setPreviewImage] = useState("");
+  const { darkMode } = useContext(DarkContext);
 
   // Fetch user profile (including artworks) using userId from AuthContext
   useEffect(() => {
@@ -88,7 +90,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen py-10 bg-gray-100">
+    <div className="min-h-screen py-10">
       <div className="container px-4 mx-auto">
         {/* Profile Header */}
         <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -169,7 +171,7 @@ const ProfilePage = () => {
 
         {/* Artworks Section */}
         <div className="mt-10">
-          <h2 className="mb-4 ml-5 text-2xl font-bold text-gray-800">
+          <h2 className="mb-4 ml-5 text-2xl font-bold ">
             My Artwork Collection
           </h2>
           {(profileData.artworks || []).length > 0 ? (
