@@ -1,5 +1,5 @@
 // Surrealism.js
-import ArtCategoryPage from "./ArtCategoryPage";
+import ArtCategoryPage from "../ArtCategoryPage";
 
 const Surrealism = () => {
   return (

@@ -1,4 +1,4 @@
-import ArtCategoryPage from "./ArtCategoryPage";
+import ArtCategoryPage from "../ArtCategoryPage";
 
 const Collage = () => {
   return <ArtCategoryPage category="collage" title="Collage Collection" />;

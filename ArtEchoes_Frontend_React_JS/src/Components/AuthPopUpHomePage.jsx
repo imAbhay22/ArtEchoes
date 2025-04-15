@@ -29,7 +29,7 @@ const AuthPopUpHomePage = () => {
       >
         {/* Light overlay to brighten the background image */}
         <div className="absolute inset-0 rounded-lg bg-white/60"></div>
-        {/* Close (X) Button */}
+
         <button
           onClick={() => setShowPopup(false)}
           className="absolute flex items-center justify-center w-10 h-10 text-black transition top-2 right-2 hover:text-red-600"

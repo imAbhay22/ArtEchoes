@@ -25,12 +25,11 @@ const SearchBar = ({ className }) => {
       }
 
       try {
-        const response = await axios.get("/api/artworks"); // Reuse your artworks
+        const response = await axios.get("/api/artworks");
         const lower = searchTerm.toLowerCase();
         const filtered = response.data.artworks.filter((art) =>
           art.title?.toLowerCase().includes(lower)
         );
-
         // Show top 5 suggestions
         setSuggestions(filtered.slice(0, 5));
       } catch (error) {
@@ -49,6 +48,7 @@ const SearchBar = ({ className }) => {
 
   return (
     <form onSubmit={handleSubmit} className="relative">
+      {/* For large screens (lg and up) */}
       <input
         type="text"
         placeholder="Search entire collection..."
@@ -58,10 +58,22 @@ const SearchBar = ({ className }) => {
           setShowSuggestions(true);
         }}
         onFocus={() => setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to allow click
-        className={`pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500 w-full ${className}`}
+        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+        className={`hidden sm:block pl-10 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500 w-full ${className}`}
       />
 
+      {/* For small and medium screens */}
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={(e) => {
+          setSearchTerm(e.target.value);
+          setShowSuggestions(true);
+        }}
+        onFocus={() => setShowSuggestions(true)}
+        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+        className={`block sm:hidden max-w-md pl-8 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500 w-full ${className}`}
+      />
       <svg
         className="absolute w-5 h-5 pointer-events-none left-3 top-3"
         fill="none"

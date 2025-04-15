@@ -5,7 +5,6 @@ import { DarkContext } from "./Mode/DarkContext";
 import image1 from "../assets/Images/AboutImg.jpg";
 
 const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
-  const { loading, error } = useAppContext();
   const [selectedArtwork, setSelectedArtwork] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { darkMode } = useContext(DarkContext);
@@ -34,25 +33,28 @@ const ArtGrid = ({ artworks = [], emptyItems = 0, defaultArtworks }) => {
 
   return (
     <div
-      className={`pl-8 mt-10 pr-8 min-h-[50vh] pb-8 w-full transition-colors duration-500 ${
-        darkMode ? "bg-[#1e1e1e] text-[#f4f4f4]" : "bg-white text-gray-800"
+      className={`pl-8 mt-20 lg:mt-10 pr-8 min-h-[50vh] pb-8 w-full transition-colors duration-500 ${
+        artworks.length > 0 &&
+        (darkMode ? "bg-[#1e1e1e] text-[#f4f4f4]" : "bg-white text-gray-800")
       }`}
     >
       {/* Search Input */}
-      <div className="flex justify-center mb-4">
-        <input
-          type="text"
-          placeholder="Search artworks..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={`p-2 rounded-md shadow-md w-[70%] font-semibold focus:outline-none transition-all duration-300
+      {artworks.length > 0 && (
+        <div className="flex justify-center mb-4">
+          <input
+            type="text"
+            placeholder="Search artworks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={`p-2 rounded-md shadow-md w-[70%] font-semibold focus:outline-none transition-all duration-300
             ${
               darkMode
                 ? "bg-[#2b2b2b] text-white placeholder:text-gray-400 border border-[#444]"
                 : "bg-[#f9f9f9] text-gray-800 border border-gray-300"
             }`}
-        />
-      </div>
+          />
+        </div>
+      )}
 
       {/* Artworks Grid */}
       <div className="flex flex-wrap justify-around">

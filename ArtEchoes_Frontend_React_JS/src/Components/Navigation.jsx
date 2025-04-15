@@ -95,10 +95,7 @@ const Navigation = () => {
 
           {/* Right-side Icons */}
           <div className="flex items-center justify-end flex-1 ml-5 space-x-4 md:pl-5 xl:flex-none xl:ml-0">
-            <SearchBar
-              setSearchQuery={setSearchQuery}
-              className="w-28 md:w-48 xl:w-64"
-            />
+            <SearchBar setSearchQuery={setSearchQuery} className="w-full" />
             {/* <InboxIcon className="hidden xl:block" /> */}
             <ProfileDropdown />
             <DarkModeToggle />

@@ -1,4 +1,4 @@
-import ArtCategoryPage from "./ArtCategoryPage";
+import ArtCategoryPage from "../ArtCategoryPage";
 
 const Printmaking = () => {
   return (

@@ -1,5 +1,5 @@
 // StreetArt.js
-import ArtCategoryPage from "./ArtCategoryPage";
+import ArtCategoryPage from "../ArtCategoryPage";
 
 const StreetArt = () => {
   return (

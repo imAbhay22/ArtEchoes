@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAppContext } from "../AppContext";
-import ArtGrid from "../ArtGrid";
+import { useAppContext } from "./AppContext";
+import ArtGrid from "./ArtGrid";
 
 const ArtCategoryPage = ({ category, title }) => {
   const { artworks, loading, error } = useAppContext();
