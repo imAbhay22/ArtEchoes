@@ -8,6 +8,7 @@ import {
   ArtDetailModal,
   TraditionalArt,
   UploadArt,
+  Upload3DArt,
   AboutUs,
   ContactUs,
   SignUp,
@@ -131,6 +132,7 @@ const AppRoutes = () => {
       <Route path="/traditional-art" element={<TraditionalArt />} />
 
       <Route path="/upload" element={<UploadArt />} />
+      <Route path="/upload-3d" element={<Upload3DArt />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact-us" element={<ContactUs />} />
       <Route path="/signup" element={<SignUp />} />

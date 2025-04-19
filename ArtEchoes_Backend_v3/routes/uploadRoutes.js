@@ -1,130 +1,184 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import Art from "../models/artModel.js";
+import ThreeDArt from "../models/ThreeDArt.js";
 import { classifyImage, moveFile } from "../utils/fileUtils.js";
 
 const router = express.Router();
 
-// Configure multer storage
+// Multer config for general uploads (classification)
 const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+});
+const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB
+
+// Multer config for 3D art uploads (separate folders)
+const storage3D = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    // Create uploads/3d-art/thumbnails or uploads/3d-art/models
+    const baseDir = path.join("uploads", "3d-art");
+    const subDir = file.fieldname === "thumbnail" ? "thumbnails" : "models";
+    const uploadPath = path.join(baseDir, subDir);
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
   },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+});
+const upload3D = multer({
+  storage: storage3D,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB
-});
-
-// Middleware to parse JSON fields from form data
+// Parse categories and tags if JSON strings
 const parseArtData = (req, res, next) => {
   try {
-    if (req.body.categories)
-      req.body.categories = JSON.parse(req.body.categories);
-    if (req.body.tags) req.body.tags = JSON.parse(req.body.tags);
+    req.body.categories = req.body.categories
+      ? JSON.parse(req.body.categories)
+      : [];
+    req.body.tags = req.body.tags ? JSON.parse(req.body.tags) : [];
     next();
-  } catch (error) {
-    res.status(400).json({ error: "Invalid data format" });
+  } catch {
+    return res.status(400).json({ error: "Invalid categories or tags format" });
   }
 };
 
-// Classify and upload artwork
+// Existing classification upload route
 router.post(
   "/classify",
   upload.single("artwork"),
   parseArtData,
   async (req, res) => {
     try {
-      if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-      }
-
       const {
         title,
-        artist = "",
-        categories,
-        description,
-        price,
-        tags,
+        artist = "Unknown Artist",
+        categories = [],
+        description = "",
+        price = 0,
+        tags = [],
         userId,
       } = req.body;
 
-      // Ensure title is provided
+      if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+      if (!title) return res.status(400).json({ error: "Title is required" });
+      if (!userId) return res.status(400).json({ error: "userId is required" });
+      if (!categories.length)
+        return res
+          .status(400)
+          .json({ error: "At least one category is required" });
+
+      let finalCategories = [...categories];
+      let targetCategory = categories[0];
+
+      if (categories.includes("Auto")) {
+        const autoCategory = await classifyImage(req.file.path);
+        finalCategories = categories
+          .filter((c) => c !== "Auto")
+          .concat(autoCategory);
+        targetCategory = autoCategory;
+      }
+
+      const movedPath = moveFile(req.file.path, targetCategory);
+      const relativePath = path
+        .relative(process.cwd(), movedPath)
+        .replace(/\\/g, "/");
+
+      const newArt = new Art({
+        title,
+        artist,
+        categories: finalCategories,
+        description,
+        price: parseFloat(price),
+        tags,
+        filePath: relativePath,
+        userId,
+      });
+      await newArt.save();
+
+      return res.status(201).json({
+        message: `Artwork uploaded successfully${
+          categories.includes("Auto")
+            ? ` and categorized as "${targetCategory}"`
+            : ""
+        }`,
+        artwork: {
+          id: newArt._id,
+          title,
+          artist,
+          filePath: relativePath,
+          categories: finalCategories,
+          price: newArt.price,
+          userId,
+          categorizedAs: targetCategory,
+        },
+      });
+    } catch (err) {
+      console.error("Upload error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+// New 3D art upload route
+router.post(
+  "/3d-art",
+  upload3D.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "modelFile", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const {
+        title,
+        description = "",
+        price = 0,
+        userId,
+        artist = "Unknown Artist",
+      } = req.body;
+
+      if (!req.files?.thumbnail || !req.files?.modelFile) {
+        return res
+          .status(400)
+          .json({ error: "Thumbnail and modelFile are required" });
+      }
       if (!title) {
         return res.status(400).json({ error: "Title is required" });
       }
-
-      // Ensure required fields are provided for final upload
       if (!userId) {
-        return res
-          .status(400)
-          .json({ error: "userId is required for saving artwork" });
-      }
-      if (!categories?.length) {
-        return res.status(400).json({ error: "Categories are required" });
+        return res.status(400).json({ error: "userId is required" });
       }
 
-      // Run classification only if "Auto" is one of the selected categories.
-      let classification;
-      if (categories.includes("Auto")) {
-        classification = await classifyImage(req.file.path);
-      }
+      const thumbFile = req.files.thumbnail[0];
+      const modelFile = req.files.modelFile[0];
 
-      // Replace "Auto" category with the classified result,
-      // or simply use the selected category if "Auto" is not chosen.
-      let finalCategories = categories.includes("Auto")
-        ? [...categories.filter((cat) => cat !== "Auto"), classification]
-        : categories;
-
-      // Determine which category to use for moving the file.
-      // If classification was run, use that result; otherwise, use the first category.
-      const categoryForMove = categories.includes("Auto")
-        ? classification
-        : finalCategories[0];
-
-      // Move the file to the appropriate category folder using the determined category.
-      const newPath = moveFile(req.file.path, categoryForMove);
-
-      // Convert absolute path to relative path
-      const relativeFilePath = path
-        .relative(process.cwd(), newPath)
+      const thumbRel = path
+        .relative(process.cwd(), thumbFile.path)
+        .replace(/\\/g, "/");
+      const modelRel = path
+        .relative(process.cwd(), modelFile.path)
         .replace(/\\/g, "/");
 
-      // Save artwork data in the database
-      const newArt = new Art({
+      const newArt3D = new ThreeDArt({
         title,
-        artist: artist || "Unknown Artist",
-        categories: finalCategories,
-        description: description || "",
-        price: price !== undefined ? parseFloat(price) : 0,
-        tags: tags || [],
-        filePath: relativeFilePath,
+        description,
+        price: parseFloat(price),
+        thumbnail: thumbRel,
+        modelFile: modelRel,
+        category: "3d-art",
+        artist,
         userId,
       });
+      await newArt3D.save();
 
-      await newArt.save();
-
-      res.status(201).json({
-        message: `Artwork uploaded successfully (and Categorized as "${categoryForMove}")`,
-        artwork: {
-          id: newArt._id,
-          title: newArt.title,
-          artist: newArt.artist,
-          filePath: newArt.filePath,
-          userId: newArt.userId,
-          categories: finalCategories,
-          categorizedAs: categoryForMove,
-          price: newArt.price,
-        },
-      });
-    } catch (error) {
-      console.error("Upload error:", error);
-      res.status(500).json({ error: error.message });
+      return res
+        .status(201)
+        .json({ message: "3D art uploaded successfully", artwork: newArt3D });
+    } catch (err) {
+      console.error("3D upload error:", err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );

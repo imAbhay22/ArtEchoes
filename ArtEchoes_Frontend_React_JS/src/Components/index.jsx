@@ -1,4 +1,5 @@
 export { default as Navigation } from "./Navigation";
+export { default as LoadingAnimation } from "./LoadingAnimation";
 export { default as HeroSection } from "./HeroSection";
 export { default as InfiniteScroll } from "./InfiniteScroll";
 export { default as Sidebar } from "./SideBar";
@@ -8,6 +9,7 @@ export { default as Drawing } from "./ArtFiles/Drawing";
 export { default as ArtDetailModal } from "./ArtDetailModal";
 export { default as TraditionalArt } from "./ArtFiles/TraditionalArt";
 export { default as UploadArt } from "./Navigation/Upload";
+export { default as Upload3DArt } from "./Navigation/Upload_3D";
 export { default as AboutUs } from "./Navigation/AboutUs";
 export { default as ContactUs } from "./Navigation/ContactUs";
 export { default as DigitalArt } from "./ArtFiles/DigitalArt";

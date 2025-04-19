@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { useAppContext } from "./AppContext";
-import { useEffect, useRef, useContext } from "react";
+import { useContext } from "react";
 import { DarkContext } from "./Mode/DarkContext";
 
 import Logo from "./Navigation/Logo";
-//  import InboxIcon from "./Navigation/InboxIcon";
 import SearchBar from "./Navigation/SearchBar";
 import ProfileDropdown from "./Navigation/ProfileDropdown";
 import NavDropdown from "./Navigation/NavDropDown";
@@ -82,9 +81,17 @@ const Navigation = () => {
                 defaultTo={dropdown.defaultTo}
               />
             ))}
-            <Link to="/upload" className={navLink}>
-              Upload
-            </Link>
+
+            {/* Upload Dropdown */}
+            <NavDropdown
+              title={<span className={navLink}>Upload</span>}
+              options={[
+                { label: "2D Art", to: "/upload" },
+                { label: "3D Art", to: "/upload-3d" },
+              ]}
+              defaultTo="/upload"
+            />
+
             <Link to="/about-us" className={navLink}>
               About Us
             </Link>
@@ -96,7 +103,6 @@ const Navigation = () => {
           {/* Right-side Icons */}
           <div className="flex items-center justify-end flex-1 ml-5 space-x-4 md:pl-5 xl:flex-none xl:ml-0">
             <SearchBar setSearchQuery={setSearchQuery} className="w-full" />
-            {/* <InboxIcon className="hidden xl:block" /> */}
             <ProfileDropdown />
             <DarkModeToggle />
           </div>

@@ -8,10 +8,10 @@ import {
   useAuth,
   ScrollToTop,
   AppRoutes,
+  LoadingAnimation,
 } from "./Components";
 
 import { DarkContext } from "./Components/Mode/DarkContext";
-import LoadingAnimation from "./Components/LoadingAnimation";
 
 const App = () => {
   const [loadingPage, setLoadingPage] = useState(true);
