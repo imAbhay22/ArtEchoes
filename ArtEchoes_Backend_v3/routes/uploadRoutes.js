@@ -1,38 +1,16 @@
+// routes/uploadRoutes.js
 import express from "express";
-import multer from "multer";
 import path from "path";
-import fs from "fs";
 import Art from "../models/artModel.js";
 import ThreeDArt from "../models/ThreeDArt.js";
 import { classifyImage, moveFile } from "../utils/fileUtils.js";
 
+// ← pull in both upload middlewares
+import { uploadClassify, upload3D } from "../middleware/upload.js";
+
 const router = express.Router();
 
-// Multer config for general uploads (classification)
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
-});
-const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB
-
-// Multer config for 3D art uploads (separate folders)
-const storage3D = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Create uploads/3d-art/thumbnails or uploads/3d-art/models
-    const baseDir = path.join("uploads", "3d-art");
-    const subDir = file.fieldname === "thumbnail" ? "thumbnails" : "models";
-    const uploadPath = path.join(baseDir, subDir);
-    fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
-});
-const upload3D = multer({
-  storage: storage3D,
-  limits: { fileSize: 50 * 1024 * 1024 },
-});
-
-// Parse categories and tags if JSON strings
+// Parse categories/tags JSON
 const parseArtData = (req, res, next) => {
   try {
     req.body.categories = req.body.categories
@@ -41,14 +19,14 @@ const parseArtData = (req, res, next) => {
     req.body.tags = req.body.tags ? JSON.parse(req.body.tags) : [];
     next();
   } catch {
-    return res.status(400).json({ error: "Invalid categories or tags format" });
+    return res.status(400).json({ error: "Invalid JSON for categories/tags" });
   }
 };
 
-// Existing classification upload route
+// — classify route (image + auto‑categorization) —
 router.post(
   "/classify",
-  upload.single("artwork"),
+  uploadClassify.single("artwork"),
   parseArtData,
   async (req, res) => {
     try {
@@ -122,7 +100,7 @@ router.post(
   }
 );
 
-// New 3D art upload route
+// — 3D art upload —
 router.post(
   "/3d-art",
   upload3D.fields([

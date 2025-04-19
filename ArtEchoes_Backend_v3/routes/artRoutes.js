@@ -1,65 +1,8 @@
+// routes/artworkRoutes.js
 import express from "express";
-import multer from "multer";
-import fs from "fs";
 import Art from "../models/artModel.js";
 
 const router = express.Router();
-
-// Ensure the uploads directory exists
-const createUploadsFolder = () => {
-  const uploadPath = "uploads/";
-  if (!fs.existsSync(uploadPath)) {
-    fs.mkdirSync(uploadPath, { recursive: true });
-  }
-  return uploadPath;
-};
-
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, createUploadsFolder());
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
-  },
-});
-
-// Allowed file types
-const allowedTypes = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "image/svg+xml",
-  "image/bmp",
-  "image/tiff",
-  "image/heif",
-  "application/pdf",
-  "application/octet-stream",
-  "model/fbx",
-  "model/obj",
-  "model/stl",
-  "model/glb",
-  "model/gltf",
-];
-
-// Validate file type
-const fileFilter = (req, file, cb) => {
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error(`Invalid file type: ${file.mimetype}`), false);
-  }
-};
-
-// Configure multer
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 20 * 1024 * 1024, files: 1 }, // 20MB limit
-});
 
 // Get artworks by user
 router.get("/artworks/user/:userId", async (req, res) => {
@@ -111,9 +54,7 @@ router.get("/artworks", async (req, res) => {
 router.get("/artworks/:id", async (req, res) => {
   try {
     const artwork = await Art.findById(req.params.id);
-    if (!artwork) {
-      return res.status(404).json({ error: "Artwork not found" });
-    }
+    if (!artwork) return res.status(404).json({ error: "Artwork not found" });
     res.json({
       ...artwork.toObject(),
       filePath: artwork.filePath?.replace(/\\/g, "/"),

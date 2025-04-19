@@ -11,10 +11,18 @@ const SearchBar = ({ className }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-      setShowSuggestions(false);
+
+    const trimmed = searchTerm.trim();
+
+    // Navigate to /search (with or without query)
+    if (trimmed) {
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      navigate("/search"); // show all artworks
     }
+    setSearchTerm("");
+
+    setShowSuggestions(false);
   };
 
   useEffect(() => {
