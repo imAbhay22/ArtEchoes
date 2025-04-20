@@ -233,7 +233,7 @@ const Upload3DArt = () => {
                     </svg>
                     <input
                       type="file"
-                      accept=".obj,.fbx,.glb,.gltf"
+                      accept=".obj,.fbx,.glb,.gltf,.zip"
                       className="hidden"
                       onChange={handleModelChange}
                       ref={modelInputRef}

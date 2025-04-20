@@ -4,6 +4,7 @@ import path from "path";
 import Art from "../models/artModel.js";
 import ThreeDArt from "../models/ThreeDArt.js";
 import { classifyImage, moveFile } from "../utils/fileUtils.js";
+import { extractZipModel } from "../utils/unzipModel.js";
 
 // ← pull in both upload middlewares
 import { uploadClassify, upload3D } from "../middleware/upload.js";
@@ -160,5 +161,116 @@ router.post(
     }
   }
 );
+
+router.post(
+  "/api/upload/3d",
+  upload3D.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "modelFile", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const modelFile = req.files?.modelFile?.[0];
+
+      if (!modelFile)
+        return res.status(400).json({ error: "Model file missing" });
+
+      const isZip = modelFile.mimetype.includes("zip");
+      if (isZip) {
+        const outputDir = path.join(
+          path.dirname(modelFile.path),
+          path.basename(modelFile.filename, path.extname(modelFile.filename))
+        );
+
+        fs.mkdirSync(outputDir, { recursive: true });
+
+        const modelFiles = extractZipModel(modelFile.path, outputDir);
+
+        if (!modelFiles) {
+          return res.status(500).json({ error: "Failed to extract ZIP file" });
+        }
+
+        fs.unlinkSync(modelFile.path); // delete ZIP
+
+        return res.status(200).json({
+          message: "ZIP extracted",
+          extractedTo: outputDir,
+          modelsFound: modelFiles.map((file) => file.replace(/\\/g, "/")), // convert \ to / for compatibility
+        });
+      }
+
+      res.status(200).json({
+        message: "3D model uploaded",
+        modelFile: modelFile.filename,
+      });
+    } catch (err) {
+      console.error("Upload error:", err);
+      res.status(500).json({ error: "Upload failed" });
+    }
+  }
+);
+
+router.get("/3d-art/model-path/:id", async (req, res) => {
+  try {
+    const art = await ThreeDArt.findById(req.params.id);
+    if (!art) return res.status(404).json({ error: "Artwork not found" });
+
+    const zipFilePath = art.modelFile;
+    const baseFolder = zipFilePath.replace(/\.zip$/i, "");
+
+    const absolutePath = path.join(process.cwd(), baseFolder);
+
+    if (!fs.existsSync(absolutePath)) {
+      return res
+        .status(404)
+        .json({ error: "Extracted model folder not found" });
+    }
+
+    const allFiles = [];
+    const SUPPORTED_MODEL_EXTENSIONS = [
+      ".obj",
+      ".stl",
+      ".fbx",
+      ".dae",
+      ".gltf",
+      ".glb",
+      ".3ds",
+      ".ply",
+      ".3mf",
+    ];
+
+    function searchDir(dir) {
+      const items = fs.readdirSync(dir);
+      for (const item of items) {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory()) {
+          searchDir(fullPath);
+        } else {
+          const ext = path.extname(fullPath).toLowerCase();
+          if (SUPPORTED_MODEL_EXTENSIONS.includes(ext)) {
+            allFiles.push(fullPath);
+          }
+        }
+      }
+    }
+
+    searchDir(absolutePath);
+
+    if (allFiles.length === 0) {
+      return res.status(404).json({ error: "No valid 3D model found" });
+    }
+
+    const firstModel = allFiles[0];
+    const relPath = path
+      .relative(process.cwd(), firstModel)
+      .replace(/\\/g, "/");
+
+    res.json({ modelUrl: `http://localhost:5000/${relPath}` });
+  } catch (err) {
+    console.error("Error getting model path:", err);
+    res.status(500).json({ error: "Failed to get model path" });
+  }
+});
 
 export default router;

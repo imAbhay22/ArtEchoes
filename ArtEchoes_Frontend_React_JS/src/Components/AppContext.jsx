@@ -11,6 +11,7 @@ export const AppProvider = ({ children }) => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [artworks, setArtworks] = useState([]);
+  const [threeDArtworks, setThreeDArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -36,8 +37,26 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const fetchThreeDArtworks = async () => {
+    try {
+      const apiUrl =
+        window.location.hostname === "localhost"
+          ? "http://localhost:5000/api/3d-artworks"
+          : "http://192.168.1.100:5000/api/3d-artworks";
+
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error("Failed to fetch 3D artworks");
+
+      const data = await response.json();
+      setThreeDArtworks(data.artworks || []);
+    } catch (err) {
+      console.error("Error fetching 3D artworks:", err);
+    }
+  };
+
   useEffect(() => {
     fetchArtworks();
+    fetchThreeDArtworks();
   }, []);
 
   return (
@@ -49,6 +68,7 @@ export const AppProvider = ({ children }) => {
         setCurrentHeroIndex,
         heroImages,
         artworks,
+        threeDArtworks,
         loading,
         error,
         searchQuery,

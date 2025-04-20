@@ -14,16 +14,28 @@ const imageFileFilter = (_req, file, cb) => {
   const isImage = file.mimetype.startsWith("image/");
   cb(isImage ? null : new Error("Only image files are allowed"), isImage);
 };
-
 const modelMimeTypes = [
-  "model/obj",
-  "model/stl",
-  "application/octet-stream",
-  "application/3mf",
-  "application/vnd.ms-pki.stl",
-  "model/gltf+json",
-  "model/gltf-binary",
+  "model/obj", // .obj
+  "model/stl", // .stl
+  "application/sla", // some servers use this for STL
+  "application/vnd.ms-pki.stl", // Microsoft STL variant
+  "application/vnd.ms-pki.3dml", // rare
+  "application/octet-stream", // raw binary
+  "application/3mf", // .3mf
+  "model/step", // .step/.stp
+  "model/iges", // .iges/.igs
+  "model/vrml", // .wrl
+  "model/x3d+xml", // .x3d
+  "model/ply", // .ply
+  "application/x-3ds", // .3ds
+  "model/dae", // .dae (COLLADA)
+  "model/fbx", // .fbx
+  "model/gltf+json", // .gltf
+  "model/gltf-binary", // .glb
+  "application/zip", // zipped archives
+  "application/x-zip-compressed", // alternate zip
 ];
+
 const modelFileFilter = (_req, file, cb) => {
   const isModel = modelMimeTypes.includes(file.mimetype);
   cb(isModel ? null : new Error("Only 3D model files are allowed"), isModel);

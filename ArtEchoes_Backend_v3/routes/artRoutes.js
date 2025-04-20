@@ -1,6 +1,7 @@
 // routes/artworkRoutes.js
 import express from "express";
 import Art from "../models/artModel.js";
+import ThreeDArt from "../models/ThreeDArt.js";
 
 const router = express.Router();
 
@@ -62,6 +63,17 @@ router.get("/artworks/:id", async (req, res) => {
   } catch (error) {
     console.error("Fetch error:", error);
     res.status(500).json({ error: "Failed to fetch artwork" });
+  }
+});
+
+// to get 3d artworks
+router.get("/3d-artworks", async (req, res) => {
+  try {
+    const artworks = await ThreeDArt.find().sort({ createdAt: -1 }).lean();
+    res.json({ artworks });
+  } catch (err) {
+    console.error("Fetch 3D art error:", err);
+    res.status(500).json({ error: err.message });
   }
 });
 
